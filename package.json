@@ -7,8 +7,7 @@
     "clean-install": "rimraf ./node_modules && npm i",
     "start": "",
     "start:dev": "nodemon",
-    "lint": "eslint . --ext .ts",
-    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/node": "^18.0.6",
@@ -17,9 +16,17 @@
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "ts-node": "^10.9.1"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "prettier --config .prettierrc --write",
+      "eslint"
+    ]
   }
 }
