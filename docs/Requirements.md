@@ -11,7 +11,8 @@
    - Pre-condition - items should exist in the inventory in order to be added to the vending machine
    - Post-condition - item quantity is updated in the vending machine
 3. **Update coins**
-   - Description - buy a product by s
+   - Pre-condition - there should be a slot for each coin type
+   - Post-condition - each coin goes in its correct coin slot
 4. **Buy product**
    - Description - buy a product by specifying the product & amount of coins of different types
    - Pre-conditions:
