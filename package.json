@@ -14,7 +14,9 @@
     "dev": "cross-env PORT=3000 NODE_ENV=dev ts-node ./server.ts",
     "prod": "PORT=3000 npm run build && npm start",
     "prepare": "husky install",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest --coverage",
+    "test:watch": "jest --watch",
+    "test:ci": "cross-env NODE_ENV=test CI=true npm run test"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",
@@ -33,6 +35,7 @@
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
+    "ts-jest": "^28.0.7",
     "ts-node": "^10.9.1",
     "typescript": "^4.7.4"
   },

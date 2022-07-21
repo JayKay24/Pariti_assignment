@@ -1,0 +1,23 @@
+name: test-pariti-challenge
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Install deps
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Unit Tests
+        run: npm run test:ci
