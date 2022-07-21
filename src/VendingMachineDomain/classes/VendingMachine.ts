@@ -11,6 +11,8 @@ import { ProductSoldOutError } from '../exceptions/ProductSoldOutError';
 import { InsufficientAmountError } from '../exceptions/InsufficientAmountError';
 
 import { Product } from './Product';
+import { DuplicateProductError } from '../exceptions/DuplicateProductError';
+import { stringSanitizer } from '../utils/string-sanitizer';
 
 export class VendingMachine {
   private products: Map<string, Product>;
@@ -38,9 +40,26 @@ export class VendingMachine {
 
   /**
    * Return an array of all the products in the VendingMachine's inventory
+   *
+   * @returns an array of products in their insertion orderr
    */
   getProducts(): Product[] {
     return [...this.products.values()];
+  }
+
+  /**
+   * Return the product matching the name
+   * @param name
+   *
+   * @returns product matching name
+   */
+  getProduct(name: string): Product {
+    const sanitizedName = stringSanitizer(name);
+    if (this.products.has(sanitizedName)) {
+      return <Product>this.products.get(sanitizedName);
+    } else {
+      throw new ProductNotFoundError(name);
+    }
   }
 
   /**
@@ -48,7 +67,9 @@ export class VendingMachine {
    * @param product
    */
   addProduct(product: Product): void {
-    this.products.set(product.name, product);
+    const sanitizedName = stringSanitizer(product.name);
+    if (this.products.has(sanitizedName)) throw new DuplicateProductError();
+    this.products.set(sanitizedName, product);
   }
 
   /**
@@ -56,16 +77,18 @@ export class VendingMachine {
    * @param name
    */
   removeProduct(name: string): void {
-    if (this.products.has(name)) {
-      this.products.delete(name);
+    const sanitizedName = stringSanitizer(name);
+    if (this.products.has(sanitizedName)) {
+      this.products.delete(sanitizedName);
     } else {
       throw new ProductNotFoundError(name);
     }
   }
 
   reduceProductByAmount(name: string, amount: number): void {
-    if (this.products.has(name)) {
-      const product = <Product>this.products.get(name);
+    const sanitizedName = stringSanitizer(name);
+    if (this.products.has(sanitizedName)) {
+      const product = <Product>this.products.get(sanitizedName);
       const { quantity: previousAmount } = product;
 
       if (previousAmount === 0) {
@@ -75,11 +98,13 @@ export class VendingMachine {
       } else {
         const computedAmount = previousAmount - amount;
         if (computedAmount === 0) {
-          this.removeProduct(name);
+          this.removeProduct(sanitizedName);
         } else {
           product.quantity = computedAmount;
         }
       }
+    } else {
+      throw new ProductNotFoundError(name);
     }
   }
 
@@ -89,9 +114,12 @@ export class VendingMachine {
    * @param newPrice
    */
   updateProductPrice(name: string, newPrice: number): void {
-    if (this.products.has(name)) {
-      const product = <Product>this.products.get(name);
+    const sanitizedName = stringSanitizer(name);
+    if (this.products.has(sanitizedName)) {
+      const product = <Product>this.products.get(sanitizedName);
       product.price = newPrice;
+    } else {
+      throw new ProductNotFoundError(name);
     }
   }
 
@@ -138,14 +166,16 @@ export class VendingMachine {
    * @param name
    */
   buyProduct(coins: CoinPayload, name: string): CoinChange {
-    if (this.products.has(name)) {
+    const sanitizedName = stringSanitizer(name);
+    if (this.products.has(sanitizedName)) {
       const amountGiven = this.convertCoinPayloadToCents(coins);
-      const product = <Product>this.products.get(name);
+      const product = <Product>this.products.get(sanitizedName);
       const productPice = this.convertProductPriceToCents(product.price);
 
       // eslint-disable-next-line no-useless-catch
       try {
         const change = this.calculateChange(amountGiven, productPice);
+        this.reduceProductByAmount(sanitizedName, 1);
         return change;
       } catch (error) {
         throw error;

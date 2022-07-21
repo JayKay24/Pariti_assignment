@@ -1,6 +1,7 @@
 import { VendingMachine } from './VendingMachine';
 import { Product } from './Product';
 import { validProduct1, validProduct2 } from '../utils/product';
+import { stringSanitizer } from '../utils/string-sanitizer';
 
 describe('VendingMachine', () => {
   // Clear the Singleton state before each test case
@@ -34,6 +35,9 @@ describe('VendingMachine', () => {
 
     expect(prod1).toBe(product1);
     expect(prod2).toBe(product2);
+    expect(() => VendingMach.addProduct(product2)).toThrow(
+      /product already exists/i
+    );
   });
 
   it('removes a product from inventory', () => {
@@ -56,5 +60,29 @@ describe('VendingMachine', () => {
 
     VendingMach.removeProduct(prod1.name);
     expect(VendingMach.getProducts().length).toBe(0);
+    expect(() => VendingMach.removeProduct(validProduct1.name)).toThrow(
+      `Product ${validProduct1.name} not found.`
+    );
+  });
+
+  it('gets a single product', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    const product = new Product(
+      validProduct1.name,
+      validProduct1.description,
+      validProduct1.quantity,
+      validProduct1.price
+    );
+
+    expect(() => VendingMach.getProduct('abc')).toThrow(
+      /product abc not found/i
+    );
+
+    VendingMach.addProduct(product);
+
+    expect(VendingMach.getProduct(validProduct1.name).name).toBe(
+      stringSanitizer(validProduct1.name)
+    );
   });
 });

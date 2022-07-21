@@ -1,5 +1,6 @@
 import { Product } from './Product';
 import { validProduct1, invalidProduct } from '../utils/product';
+import { stringSanitizer } from '../utils/string-sanitizer';
 
 describe('Product', () => {
   it('should create a valid product', () => {
@@ -12,7 +13,7 @@ describe('Product', () => {
 
     const expectedPriceValidProduct1 = 12.23;
 
-    expect(product.name).toBe(validProduct1.name);
+    expect(product.name).toBe(stringSanitizer(validProduct1.name));
     expect(product.description).toBe(validProduct1.description);
     expect(product.price).toBe(expectedPriceValidProduct1);
     expect(product.quantity).toBe(validProduct1.quantity);
