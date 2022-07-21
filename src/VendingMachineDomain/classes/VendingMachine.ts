@@ -8,7 +8,6 @@ import { ProductNotFoundError } from '../exceptions/ProductNotFoundError';
 import { InsufficientCoinsError } from '../exceptions/InsufficientCoinsError';
 import { InsufficientProducts } from '../exceptions/InsufficientProductsError';
 import { ProductSoldOutError } from '../exceptions/ProductSoldOutError';
-import { InvalidPriceError } from '../exceptions/InvalidPriceError';
 import { InsufficientAmountError } from '../exceptions/InsufficientAmountError';
 
 import { Product } from './Product';
@@ -92,9 +91,6 @@ export class VendingMachine {
   updateProductPrice(name: string, newPrice: number): void {
     if (this.products.has(name)) {
       const product = <Product>this.products.get(name);
-
-      if (newPrice < 0) throw new InvalidPriceError();
-
       product.price = newPrice;
     }
   }
@@ -106,7 +102,7 @@ export class VendingMachine {
    */
   loadCoins(coin: CoinType, amount: number): void {
     if (this.coins.has(coin)) {
-      const previousAmount = this.coins.get(coin) || 0;
+      const previousAmount = <number>this.coins.get(coin);
 
       this.coins.set(coin, previousAmount + amount);
 
