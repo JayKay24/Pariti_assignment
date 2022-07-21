@@ -74,7 +74,12 @@ export class VendingMachine {
       } else if (previousAmount < amount) {
         throw new InsufficientProducts(amount);
       } else {
-        product.quantity -= amount;
+        const computedAmount = previousAmount - amount;
+        if (computedAmount === 0) {
+          this.removeProduct(name);
+        } else {
+          product.quantity = computedAmount;
+        }
       }
     }
   }
