@@ -86,5 +86,50 @@ describe('VendingMachine', () => {
     );
   });
 
-  // it('reduces')
+  it('should reduce the product quantity', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    const product1 = new Product(
+      validProduct1.name,
+      validProduct1.description,
+      validProduct1.quantity,
+      validProduct1.price
+    );
+
+    const product2 = new Product(
+      validProduct2.name,
+      validProduct2.description,
+      validProduct2.quantity,
+      validProduct2.price
+    );
+
+    VendingMach.addProduct(product1);
+    VendingMach.addProduct(product2);
+
+    expect(() =>
+      VendingMach.decrementProductQuantity(product1.name, 1000)
+    ).toThrow(/quantity must not be less than 0/i);
+
+    VendingMach.incrementProductQuantity(product2.name, 5);
+
+    expect(VendingMach.getProduct(product2.name).quantity).toBe(
+      Product.MAX_QUANTITY
+    );
+  });
+
+  it('should update the product price', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    const product = new Product(
+      validProduct1.name,
+      validProduct1.description,
+      validProduct1.quantity,
+      validProduct1.price
+    );
+
+    VendingMach.addProduct(product);
+    VendingMach.updateProductPrice(product.name, 48.567);
+
+    expect(VendingMach.getProduct(product.name).price).toEqual(48.57);
+  });
 });

@@ -11,6 +11,7 @@ export class Product {
   private productQuantity = 0;
   private productName = '';
   private productDescription = '';
+  static MAX_QUANTITY = 10; // Max 10 items per product to enforce physical upper limit
   constructor(
     name: string,
     description: string,
@@ -29,13 +30,18 @@ export class Product {
 
   set quantity(quantity: number) {
     if (quantity < 0) throw new InvalidQuantityError();
-    this.productQuantity = Number(quantity.toFixed()); // expect only integers
+    if (quantity > Product.MAX_QUANTITY) {
+      this.productQuantity = Number(Product.MAX_QUANTITY.toFixed());
+    } else {
+      this.productQuantity = Number(quantity.toFixed()); // expect only integers
+    }
   }
 
   get price(): number {
     return this.productPrice;
   }
 
+  // Still unsure about setting a max price
   set price(price: number) {
     if (price < 0) throw new InvalidPriceError();
     this.productPrice = Number(price.toFixed(2)); // round up to 2 decimal places
