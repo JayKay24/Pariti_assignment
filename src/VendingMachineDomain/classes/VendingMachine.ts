@@ -7,6 +7,7 @@ import { CoinPayload } from '../contracts/CoinPayload';
 import { ProductNotFoundError } from '../exceptions/ProductNotFoundError';
 import { InsufficientCoinsError } from '../exceptions/InsufficientCoinsError';
 import { InsufficientAmountError } from '../exceptions/InsufficientAmountError';
+import { InvalidCoinAmountError } from '../exceptions/InvalidCoinAmountError';
 
 import { Product } from './Product';
 import { DuplicateProductError } from '../exceptions/DuplicateProductError';
@@ -15,15 +16,24 @@ import { stringSanitizer } from '../utils/string-sanitizer';
 export class VendingMachine {
   private products: Map<string, Product>;
   private coins: Map<CoinType, number>;
-  private totalCents: number;
+  private totalAmountOfCents: number;
   private static instance: VendingMachine;
+  // Enforce an upper limit for physical machine
+  static MAX_SLOT_AMOUNT_FOR_EACH_COINTYPE = 100;
 
   // prevent construction of new VendingMachine objects to avoid
   // mistakes
   private constructor() {
     this.products = new Map();
     this.coins = new Map();
-    this.totalCents = 0;
+    this.totalAmountOfCents = 0;
+
+    this.coins.set(CoinType.Dollar, 0);
+    this.coins.set(CoinType.HalfDollar, 0);
+    this.coins.set(CoinType.Quarter, 0);
+    this.coins.set(CoinType.Dime, 0);
+    this.coins.set(CoinType.Nickel, 0);
+    this.coins.set(CoinType.Penny, 0);
   }
 
   // VendingMachine should be a Singleton throughout the
@@ -34,6 +44,19 @@ export class VendingMachine {
     }
 
     return VendingMachine.instance;
+  }
+
+  get totalCents(): number {
+    return this.totalAmountOfCents;
+  }
+
+  /**
+   * Return the current amount of coins for the given CoinType
+   * @param coin
+   * @returns current amount of coins for given CoinType
+   */
+  getCoinAmount(coin: CoinType): number {
+    return <number>this.coins.get(coin);
   }
 
   /**
@@ -132,10 +155,16 @@ export class VendingMachine {
     if (this.coins.has(coin)) {
       const previousAmount = <number>this.coins.get(coin);
 
-      this.coins.set(coin, previousAmount + amount);
+      const newAmount = previousAmount + Number(amount.toFixed());
+      if (newAmount < 0) throw new InvalidCoinAmountError();
+      if (newAmount > VendingMachine.MAX_SLOT_AMOUNT_FOR_EACH_COINTYPE) {
+        this.coins.set(coin, VendingMachine.MAX_SLOT_AMOUNT_FOR_EACH_COINTYPE);
+      } else {
+        this.coins.set(coin, newAmount);
+      }
 
       const centValue = amount * CentValue[coin];
-      this.totalCents += centValue;
+      this.totalAmountOfCents += centValue;
     }
   }
 
@@ -151,12 +180,12 @@ export class VendingMachine {
       if (amount > previousAmount) {
         throw new InsufficientCoinsError();
       } else {
-        const newAmount = previousAmount - amount;
+        const newAmount = previousAmount - Number(amount.toFixed());
         this.coins.set(coin, newAmount);
       }
 
       const centValue = amount * CentValue[coin];
-      this.totalCents -= centValue;
+      this.totalAmountOfCents -= centValue;
     }
   }
 
@@ -299,9 +328,17 @@ export class VendingMachine {
    * Resets the Vending Machine for testing purposes.
    *
    */
-  public clearInventory() {
+  public ResetInventory() {
     this.products.clear();
     this.coins.clear();
-    this.totalCents = 0;
+
+    this.coins.set(CoinType.Dollar, 0);
+    this.coins.set(CoinType.HalfDollar, 0);
+    this.coins.set(CoinType.Quarter, 0);
+    this.coins.set(CoinType.Dime, 0);
+    this.coins.set(CoinType.Nickel, 0);
+    this.coins.set(CoinType.Penny, 0);
+
+    this.totalAmountOfCents = 0;
   }
 }

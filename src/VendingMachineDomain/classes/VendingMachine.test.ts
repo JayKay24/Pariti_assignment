@@ -1,11 +1,13 @@
 import { VendingMachine } from './VendingMachine';
 import { Product } from './Product';
+import { CoinType } from '../enums/CoinType';
 import { validProduct1, validProduct2 } from '../utils/product';
 import { stringSanitizer } from '../utils/string-sanitizer';
+import { coinsToLoad, invalidCoinsToLoad } from '../utils/coins';
 
 describe('VendingMachine', () => {
   // Clear the Singleton state before each test case
-  beforeEach(() => VendingMachine.getInstance().clearInventory());
+  beforeEach(() => VendingMachine.getInstance().ResetInventory());
 
   it('VendingMachine is a Singleton', () => {
     expect(VendingMachine.getInstance()).toBe(VendingMachine.getInstance());
@@ -131,5 +133,24 @@ describe('VendingMachine', () => {
     VendingMach.updateProductPrice(product.name, 48.567);
 
     expect(VendingMach.getProduct(product.name).price).toEqual(48.57);
+  });
+
+  it('should load given coins of a particular type into the Vending machine', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.loadCoins(CoinType.Penny, coinsToLoad.Penny);
+
+    expect(VendingMach.getCoinAmount(CoinType.Dollar)).toEqual(
+      coinsToLoad.Dollar
+    );
+    expect(VendingMach.getCoinAmount(CoinType.HalfDollar)).toEqual(
+      coinsToLoad.HalfDollar
+    );
+    expect(VendingMach.getCoinAmount(CoinType.Penny)).toEqual(
+      coinsToLoad.Penny
+    );
+    expect(VendingMach.totalCents).toEqual(400);
   });
 });
