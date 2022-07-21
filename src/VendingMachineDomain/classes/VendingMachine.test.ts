@@ -3,6 +3,9 @@ import { Product } from './Product';
 import { validProduct1, validProduct2 } from '../utils/product';
 
 describe('VendingMachine', () => {
+  // Clear the Singleton state before each test case
+  beforeEach(() => VendingMachine.getInstance().clearInventory());
+
   it('VendingMachine is a Singleton', () => {
     expect(VendingMachine.getInstance()).toBe(VendingMachine.getInstance());
   });
@@ -31,5 +34,27 @@ describe('VendingMachine', () => {
 
     expect(prod1).toBe(product1);
     expect(prod2).toBe(product2);
+  });
+
+  it('removes a product from inventory', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    expect(() => VendingMach.removeProduct('abc')).toThrow(
+      /product abc not found/i
+    );
+
+    const product = new Product(
+      validProduct1.name,
+      validProduct1.description,
+      validProduct1.quantity,
+      validProduct1.price
+    );
+
+    VendingMach.addProduct(product);
+    const [prod1] = VendingMach.getProducts();
+    expect(prod1).toBe(product);
+
+    VendingMach.removeProduct(prod1.name);
+    expect(VendingMach.getProducts().length).toBe(0);
   });
 });

@@ -269,4 +269,14 @@ export class VendingMachine {
 
     return resultingChange;
   }
+
+  /**
+   * Resets the Vending Machine for testing purposes.
+   *
+   */
+  public clearInventory() {
+    this.products.clear();
+    this.coins.clear();
+    this.totalCents = 0;
+  }
 }
