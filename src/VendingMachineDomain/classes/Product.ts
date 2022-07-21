@@ -37,7 +37,7 @@ export class Product {
 
   set price(price: number) {
     if (price < 0) throw new InvalidPriceError();
-    this.price = Number(price.toFixed(2)); // round up to 2 decimal places
+    this.productPrice = Number(price.toFixed(2)); // round up to 2 decimal places
   }
 
   get name(): string {
@@ -55,6 +55,6 @@ export class Product {
 
   set description(desc: string) {
     if (desc.length < 5) throw new InvalidDescription('Description');
-    this.description = desc;
+    this.productDescription = desc;
   }
 }
