@@ -99,7 +99,7 @@ export class VendingMachine {
    * @param coin
    * @param amount
    */
-  addCoins(coin: CoinType, amount: number): void {
+  loadCoins(coin: CoinType, amount: number): void {
     if (this.coins.has(coin)) {
       const previousAmount = this.coins.get(coin) || 0;
 
