@@ -85,4 +85,6 @@ describe('VendingMachine', () => {
       stringSanitizer(validProduct1.name)
     );
   });
+
+  // it('reduces')
 });

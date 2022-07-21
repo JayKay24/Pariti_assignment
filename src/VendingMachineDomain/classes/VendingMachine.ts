@@ -6,8 +6,6 @@ import { CoinPayload } from '../contracts/CoinPayload';
 
 import { ProductNotFoundError } from '../exceptions/ProductNotFoundError';
 import { InsufficientCoinsError } from '../exceptions/InsufficientCoinsError';
-import { InsufficientProducts } from '../exceptions/InsufficientProductsError';
-import { ProductSoldOutError } from '../exceptions/ProductSoldOutError';
 import { InsufficientAmountError } from '../exceptions/InsufficientAmountError';
 
 import { Product } from './Product';
@@ -85,42 +83,44 @@ export class VendingMachine {
     }
   }
 
-  reduceProductByAmount(name: string, amount: number): void {
-    const sanitizedName = stringSanitizer(name);
-    if (this.products.has(sanitizedName)) {
-      const product = <Product>this.products.get(sanitizedName);
-      const { quantity: previousAmount } = product;
+  /**
+   * Increase the product quantity by the given amount
+   * @param name
+   * @param amount
+   * @returns updated product
+   */
+  incrementProductQuantity(name: string, amount: number): Product {
+    const product = this.getProduct(name);
+    product.quantity += amount;
 
-      if (previousAmount === 0) {
-        throw new ProductSoldOutError();
-      } else if (previousAmount < amount) {
-        throw new InsufficientProducts(amount);
-      } else {
-        const computedAmount = previousAmount - amount;
-        if (computedAmount === 0) {
-          this.removeProduct(sanitizedName);
-        } else {
-          product.quantity = computedAmount;
-        }
-      }
-    } else {
-      throw new ProductNotFoundError(name);
-    }
+    return product;
+  }
+
+  /**
+   * Decrease the product quantity by the given amount
+   * @param name
+   * @param amount
+   * @returns updated product
+   */
+  decrementProductQuantity(name: string, amount: number): Product {
+    const product = this.getProduct(name);
+    product.quantity -= amount;
+
+    return product;
   }
 
   /**
    * Update the price of a product with a valid price
    * @param name
    * @param newPrice
+   *
+   * @returns updated product
    */
-  updateProductPrice(name: string, newPrice: number): void {
-    const sanitizedName = stringSanitizer(name);
-    if (this.products.has(sanitizedName)) {
-      const product = <Product>this.products.get(sanitizedName);
-      product.price = newPrice;
-    } else {
-      throw new ProductNotFoundError(name);
-    }
+  updateProductPrice(name: string, newPrice: number): Product {
+    const product = this.getProduct(name);
+    product.price = newPrice;
+
+    return product;
   }
 
   /**
@@ -144,7 +144,7 @@ export class VendingMachine {
    * @param coin
    * @param amount
    */
-  removeCoins(coin: CoinType, amount: number): void {
+  decrementCoins(coin: CoinType, amount: number): void {
     if (this.coins.has(coin)) {
       const previousAmount = <number>this.coins.get(coin);
 
@@ -166,22 +166,17 @@ export class VendingMachine {
    * @param name
    */
   buyProduct(coins: CoinPayload, name: string): CoinChange {
-    const sanitizedName = stringSanitizer(name);
-    if (this.products.has(sanitizedName)) {
-      const amountGiven = this.convertCoinPayloadToCents(coins);
-      const product = <Product>this.products.get(sanitizedName);
-      const productPice = this.convertProductPriceToCents(product.price);
+    const product = this.getProduct(name);
+    const amountGiven = this.convertCoinPayloadToCents(coins);
+    const productPice = this.convertProductPriceToCents(product.price);
 
-      // eslint-disable-next-line no-useless-catch
-      try {
-        const change = this.calculateChange(amountGiven, productPice);
-        this.reduceProductByAmount(sanitizedName, 1);
-        return change;
-      } catch (error) {
-        throw error;
-      }
-    } else {
-      throw new ProductNotFoundError(name);
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const change = this.calculateChange(amountGiven, productPice);
+      this.decrementProductQuantity(name, 1);
+      return change;
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -241,22 +236,22 @@ export class VendingMachine {
     for (const [coinType, amount] of Object.entries(coinsToExtract)) {
       switch (coinType) {
         case CoinType.Dollar:
-          this.removeCoins(CoinType.Dollar, amount);
+          this.decrementCoins(CoinType.Dollar, amount);
           break;
         case CoinType.HalfDollar:
-          this.removeCoins(CoinType.HalfDollar, amount);
+          this.decrementCoins(CoinType.HalfDollar, amount);
           break;
         case CoinType.Quarter:
-          this.removeCoins(CoinType.Quarter, amount);
+          this.decrementCoins(CoinType.Quarter, amount);
           break;
         case CoinType.Dime:
-          this.removeCoins(CoinType.Dime, amount);
+          this.decrementCoins(CoinType.Dime, amount);
           break;
         case CoinType.Nickel:
-          this.removeCoins(CoinType.Nickel, amount);
+          this.decrementCoins(CoinType.Nickel, amount);
           break;
         case CoinType.Penny:
-          this.removeCoins(CoinType.Penny, amount);
+          this.decrementCoins(CoinType.Penny, amount);
           break;
       }
     }
