@@ -3,7 +3,7 @@ import { Product } from './Product';
 import { CoinType } from '../enums/CoinType';
 import { validProduct1, validProduct2 } from '../utils/product';
 import { sanitizeString } from '../utils/string-sanitizer';
-import { coinsToLoad } from '../utils/coins';
+import { coinsToLoad, invalidCoinsToLoad } from '../utils/coins';
 import { CoinPayload } from '../contracts/CoinPayload';
 
 describe('VendingMachine', () => {
@@ -153,6 +153,10 @@ describe('VendingMachine', () => {
       coinsToLoad.Penny
     );
     expect(VendingMach.totalCents).toEqual(400);
+
+    expect(() =>
+      VendingMach.loadCoins(CoinType.Dime, invalidCoinsToLoad.Dime)
+    ).toThrow(/coin amount must not be less than 0/i);
   });
 
   it('should decrement the amount of coins given CoinType and amount', () => {
