@@ -11,14 +11,14 @@ import { InvalidCoinAmountError } from '../exceptions/InvalidCoinAmountError';
 
 import { ProductSlot } from './ProductSlot';
 import { DuplicateProductError } from '../exceptions/DuplicateProductError';
-import { sanitizeString } from '../utils/string-sanitizer';
-import { sanitizeAmount } from '../utils/amount-sanitizer';
-import { sanitizeCoinPayload } from '../utils/coin-payload-sanitizer';
+import { sanitizeString } from '../../utils/string-sanitizer';
+import { sanitizeAmount } from '../../utils/amount-sanitizer';
+import { sanitizeCoinPayload } from '../../utils/coin-payload-sanitizer';
 
 export class VendingMachine {
   // ProductSlot implicitly contains products.
   private products: Map<string, ProductSlot>;
-  private coins: Map<CoinType, number>;
+  private coffer: Map<CoinType, number>;
   private totalAmountOfCents: number;
   private static instance: VendingMachine;
   // Enforce an upper limit for physical machine
@@ -28,15 +28,15 @@ export class VendingMachine {
   // mistakes
   private constructor() {
     this.products = new Map();
-    this.coins = new Map();
+    this.coffer = new Map();
     this.totalAmountOfCents = 0;
 
-    this.coins.set(CoinType.Dollar, 0);
-    this.coins.set(CoinType.HalfDollar, 0);
-    this.coins.set(CoinType.Quarter, 0);
-    this.coins.set(CoinType.Dime, 0);
-    this.coins.set(CoinType.Nickel, 0);
-    this.coins.set(CoinType.Penny, 0);
+    this.coffer.set(CoinType.Dollar, 0);
+    this.coffer.set(CoinType.HalfDollar, 0);
+    this.coffer.set(CoinType.Quarter, 0);
+    this.coffer.set(CoinType.Dime, 0);
+    this.coffer.set(CoinType.Nickel, 0);
+    this.coffer.set(CoinType.Penny, 0);
   }
 
   // VendingMachine should be a Singleton throughout the
@@ -54,12 +54,20 @@ export class VendingMachine {
   }
 
   /**
+   * Returns mapping of CoinType to amount
+   * @returns map of all coin types and amount of each
+   */
+  getCoffer(): Map<CoinType, number> {
+    return this.coffer;
+  }
+
+  /**
    * Return the current amount of coins for the given CoinType
    * @param coin
    * @returns current amount of coins for given CoinType
    */
   getCoinAmount(coin: CoinType): number {
-    return <number>this.coins.get(coin);
+    return <number>this.coffer.get(coin);
   }
 
   /**
@@ -150,21 +158,21 @@ export class VendingMachine {
   }
 
   /**
-   * Increase amount of coins of type CoinType
+   * Increase amount of coins in the coffer of type CoinType
    * @param coin
    * @param amount
    */
   loadCoins(coin: CoinType, amount: number): void {
-    if (this.coins.has(coin)) {
+    if (this.coffer.has(coin)) {
       const sanitizedAmount = sanitizeAmount(amount);
-      const previousAmount = <number>this.coins.get(coin);
+      const previousAmount = <number>this.coffer.get(coin);
 
       const newAmount = previousAmount + sanitizedAmount;
       if (newAmount < 0) throw new InvalidCoinAmountError();
       if (newAmount > VendingMachine.MAX_SLOT_AMOUNT_FOR_EACH_COINTYPE) {
-        this.coins.set(coin, VendingMachine.MAX_SLOT_AMOUNT_FOR_EACH_COINTYPE);
+        this.coffer.set(coin, VendingMachine.MAX_SLOT_AMOUNT_FOR_EACH_COINTYPE);
       } else {
-        this.coins.set(coin, newAmount);
+        this.coffer.set(coin, newAmount);
       }
 
       const centValue = sanitizedAmount * CentValue[coin];
@@ -173,20 +181,20 @@ export class VendingMachine {
   }
 
   /**
-   * Decrease amount of coins of type CoinType
+   * Decrease amount of coins in the coffer of type CoinType
    * @param coin
    * @param amount
    */
   decrementCoins(coin: CoinType, amount: number): void {
-    if (this.coins.has(coin)) {
+    if (this.coffer.has(coin)) {
       const sanitizedAmount = sanitizeAmount(amount);
-      const previousAmount = <number>this.coins.get(coin);
+      const previousAmount = <number>this.coffer.get(coin);
 
       if (sanitizedAmount > previousAmount) {
         throw new InsufficientCoinsError();
       } else {
         const newAmount = previousAmount - sanitizedAmount;
-        this.coins.set(coin, newAmount);
+        this.coffer.set(coin, newAmount);
       }
 
       const centValue = sanitizedAmount * CentValue[coin];
@@ -256,19 +264,19 @@ export class VendingMachine {
       centsGiven - productCents
     );
 
-    const validChange = this.extractCoinsFromMachine(expectedChange);
+    const validChange = this.extractCoinsFromCoffer(expectedChange);
 
     return validChange;
   }
 
   /**
-   * Validate that the vending machine has the available coins to
+   * Validate that the coffer has the available coins to
    * return the correct change
    * @param coinsToExtract
    *
    * @returns object mapping each coin type to amount
    */
-  private extractCoinsFromMachine(coinsToExtract: CoinChange): CoinChange {
+  private extractCoinsFromCoffer(coinsToExtract: CoinChange): CoinChange {
     const coinsToExtractKeys = Object.keys(coinsToExtract);
     for (const key of coinsToExtractKeys) {
       this.decrementCoins(<CoinType>key, coinsToExtract[<CoinType>key]);
@@ -320,14 +328,14 @@ export class VendingMachine {
    */
   public ResetInventory() {
     this.products.clear();
-    this.coins.clear();
+    this.coffer.clear();
 
-    this.coins.set(CoinType.Dollar, 0);
-    this.coins.set(CoinType.HalfDollar, 0);
-    this.coins.set(CoinType.Quarter, 0);
-    this.coins.set(CoinType.Dime, 0);
-    this.coins.set(CoinType.Nickel, 0);
-    this.coins.set(CoinType.Penny, 0);
+    this.coffer.set(CoinType.Dollar, 0);
+    this.coffer.set(CoinType.HalfDollar, 0);
+    this.coffer.set(CoinType.Quarter, 0);
+    this.coffer.set(CoinType.Dime, 0);
+    this.coffer.set(CoinType.Nickel, 0);
+    this.coffer.set(CoinType.Penny, 0);
 
     this.totalAmountOfCents = 0;
   }

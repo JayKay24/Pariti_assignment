@@ -4,7 +4,7 @@ import {
   InvalidDescription,
   InvalidName
 } from '../exceptions/InvalidTextError';
-import { sanitizeString } from '../utils/string-sanitizer';
+import { sanitizeString } from '../../utils/string-sanitizer';
 
 export class ProductSlot {
   private productPrice = 0;

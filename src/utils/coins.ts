@@ -1,5 +1,5 @@
-import { CoinPayload } from '../contracts/CoinPayload';
-import { CoinType } from '../enums/CoinType';
+import { CoinPayload } from '../models/contracts/CoinPayload';
+import { CoinType } from '../models/enums/CoinType';
 
 const coinsToLoad: CoinPayload = {
   [CoinType.Dollar]: 2,

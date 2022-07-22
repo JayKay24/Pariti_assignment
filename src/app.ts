@@ -1,17 +1,29 @@
 import * as bodyParser from 'body-parser';
 import express from 'express';
+import { errorHandler } from './errorHandler';
 
-import { Index } from './routes/index';
+import { VendingMachine } from './models/classes/VendingMachine';
+import { CoinRoute } from './routes/coin';
+import { ProductSlotRoute } from './routes/productSlot';
 
 class App {
   app: express.Application;
-  indexRoutes: Index = new Index();
+  productRoutes: ProductSlotRoute = new ProductSlotRoute();
+  coinRoutes: CoinRoute = new CoinRoute();
+  vendingMachine: VendingMachine;
 
-  constructor() {
+  constructor(vendingMachine: VendingMachine) {
     this.app = express();
+    this.vendingMachine = vendingMachine;
     this.app.use(bodyParser.json());
-    this.indexRoutes.routes(this.app);
+    this.productRoutes.routes(this.app);
+    this.coinRoutes.routes(this.app);
+    this.app.use(errorHandler);
   }
 }
 
-export default new App().app;
+const VendingMachineInstance = VendingMachine.getInstance();
+
+const app = new App(VendingMachineInstance).app;
+
+export { app, VendingMachineInstance };

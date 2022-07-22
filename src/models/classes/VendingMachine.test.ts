@@ -1,9 +1,9 @@
 import { VendingMachine } from './VendingMachine';
 import { ProductSlot } from './ProductSlot';
 import { CoinType } from '../enums/CoinType';
-import { validProduct1, validProduct2 } from '../utils/product';
-import { sanitizeString } from '../utils/string-sanitizer';
-import { coinsToLoad, invalidCoinsToLoad } from '../utils/coins';
+import { validProduct1, validProduct2 } from '../../utils/product';
+import { sanitizeString } from '../../utils/string-sanitizer';
+import { coinsToLoad, invalidCoinsToLoad } from '../../utils/coins';
 import { CoinPayload } from '../contracts/CoinPayload';
 
 describe('VendingMachine', () => {

@@ -1,6 +1,6 @@
 import { ProductSlot } from './ProductSlot';
-import { validProduct1, invalidProduct } from '../utils/product';
-import { sanitizeString } from '../utils/string-sanitizer';
+import { validProduct1, invalidProduct } from '../../utils/product';
+import { sanitizeString } from '../../utils/string-sanitizer';
 
 describe('ProductSlot', () => {
   it('should create a valid product', () => {
