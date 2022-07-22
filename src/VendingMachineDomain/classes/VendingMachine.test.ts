@@ -3,7 +3,7 @@ import { Product } from './Product';
 import { CoinType } from '../enums/CoinType';
 import { validProduct1, validProduct2 } from '../utils/product';
 import { sanitizeString } from '../utils/string-sanitizer';
-import { coinsToLoad, invalidCoinsToLoad } from '../utils/coins';
+import { coinsToLoad } from '../utils/coins';
 import { CoinPayload } from '../contracts/CoinPayload';
 
 describe('VendingMachine', () => {
@@ -333,6 +333,50 @@ describe('Vending Machine: Buying a product', () => {
 
     expect(() => VendingMach.buyProduct(payloadProd1, product1.name)).toThrow(
       /amount given is less than price/i
+    );
+  });
+
+  it('should fail if amount of coins loaded is not sufficient to provide change', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    const product1 = new Product(
+      validProduct1.name,
+      validProduct1.description,
+      validProduct1.quantity,
+      validProduct1.price
+    );
+
+    const product2 = new Product(
+      validProduct2.name,
+      validProduct2.description,
+      validProduct2.quantity,
+      validProduct2.price
+    );
+
+    VendingMach.addProduct(product1);
+    VendingMach.addProduct(product2);
+
+    // Load the vending machine with 10 cents
+    VendingMach.loadCoins(CoinType.Dollar, 0);
+    VendingMach.loadCoins(CoinType.HalfDollar, 0);
+    VendingMach.loadCoins(CoinType.Quarter, 0);
+    VendingMach.loadCoins(CoinType.Dime, 0);
+    VendingMach.loadCoins(CoinType.Nickel, coinsToLoad.Nickel);
+    VendingMach.loadCoins(CoinType.Penny, 0);
+
+    expect(VendingMach.totalCents).toBe(10);
+
+    const payloadProd1: CoinPayload = {
+      [CoinType.Dollar]: 3,
+      [CoinType.HalfDollar]: 0,
+      [CoinType.Quarter]: 0,
+      [CoinType.Dime]: 0,
+      [CoinType.Nickel]: 0,
+      [CoinType.Penny]: 0
+    };
+
+    expect(() => VendingMach.buyProduct(payloadProd1, product1.name)).toThrow(
+      /not enough coins in the machine to make change/i
     );
   });
 });
