@@ -11,7 +11,9 @@ import { InvalidCoinAmountError } from '../exceptions/InvalidCoinAmountError';
 
 import { Product } from './Product';
 import { DuplicateProductError } from '../exceptions/DuplicateProductError';
-import { stringSanitizer } from '../utils/string-sanitizer';
+import { sanitizeString } from '../utils/string-sanitizer';
+import { sanitizeAmount } from '../utils/amount-sanitizer';
+import { sanitizeCoinPayload } from '../utils/coin-payload-sanitizer';
 
 export class VendingMachine {
   private products: Map<string, Product>;
@@ -75,7 +77,7 @@ export class VendingMachine {
    * @returns product matching name
    */
   getProduct(name: string): Product {
-    const sanitizedName = stringSanitizer(name);
+    const sanitizedName = sanitizeString(name);
     if (this.products.has(sanitizedName)) {
       return <Product>this.products.get(sanitizedName);
     } else {
@@ -88,7 +90,7 @@ export class VendingMachine {
    * @param product
    */
   addProduct(product: Product): void {
-    const sanitizedName = stringSanitizer(product.name);
+    const sanitizedName = sanitizeString(product.name);
     if (this.products.has(sanitizedName)) throw new DuplicateProductError();
     this.products.set(sanitizedName, product);
   }
@@ -98,7 +100,7 @@ export class VendingMachine {
    * @param name
    */
   removeProduct(name: string): void {
-    const sanitizedName = stringSanitizer(name);
+    const sanitizedName = sanitizeString(name);
     if (this.products.has(sanitizedName)) {
       this.products.delete(sanitizedName);
     } else {
@@ -153,9 +155,10 @@ export class VendingMachine {
    */
   loadCoins(coin: CoinType, amount: number): void {
     if (this.coins.has(coin)) {
+      const sanitizedAmount = sanitizeAmount(amount);
       const previousAmount = <number>this.coins.get(coin);
 
-      const newAmount = previousAmount + Number(amount.toFixed());
+      const newAmount = previousAmount + sanitizedAmount;
       if (newAmount < 0) throw new InvalidCoinAmountError();
       if (newAmount > VendingMachine.MAX_SLOT_AMOUNT_FOR_EACH_COINTYPE) {
         this.coins.set(coin, VendingMachine.MAX_SLOT_AMOUNT_FOR_EACH_COINTYPE);
@@ -163,7 +166,7 @@ export class VendingMachine {
         this.coins.set(coin, newAmount);
       }
 
-      const centValue = amount * CentValue[coin];
+      const centValue = sanitizedAmount * CentValue[coin];
       this.totalAmountOfCents += centValue;
     }
   }
@@ -175,16 +178,17 @@ export class VendingMachine {
    */
   decrementCoins(coin: CoinType, amount: number): void {
     if (this.coins.has(coin)) {
+      const sanitizedAmount = sanitizeAmount(amount);
       const previousAmount = <number>this.coins.get(coin);
 
-      if (amount > previousAmount) {
+      if (sanitizedAmount > previousAmount) {
         throw new InsufficientCoinsError();
       } else {
-        const newAmount = previousAmount - Number(amount.toFixed());
+        const newAmount = previousAmount - sanitizedAmount;
         this.coins.set(coin, newAmount);
       }
 
-      const centValue = amount * CentValue[coin];
+      const centValue = sanitizedAmount * CentValue[coin];
       this.totalAmountOfCents -= centValue;
     }
   }
@@ -219,8 +223,10 @@ export class VendingMachine {
   }
 
   private convertCoinPayloadToCents(payload: CoinPayload): number {
+    const sanitizedPayload = sanitizeCoinPayload(payload);
     let resultCents = 0;
-    const { Dollar, HalfDollar, Quarter, Dime, Nickel, Penny } = payload;
+    const { Dollar, HalfDollar, Quarter, Dime, Nickel, Penny } =
+      sanitizedPayload;
 
     resultCents += Dollar * CentValue.Dollar;
     resultCents += HalfDollar * CentValue.HalfDollar;

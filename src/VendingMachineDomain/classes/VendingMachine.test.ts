@@ -2,7 +2,7 @@ import { VendingMachine } from './VendingMachine';
 import { Product } from './Product';
 import { CoinType } from '../enums/CoinType';
 import { validProduct1, validProduct2 } from '../utils/product';
-import { stringSanitizer } from '../utils/string-sanitizer';
+import { sanitizeString } from '../utils/string-sanitizer';
 import { coinsToLoad, invalidCoinsToLoad } from '../utils/coins';
 
 describe('VendingMachine', () => {
@@ -84,7 +84,7 @@ describe('VendingMachine', () => {
     VendingMach.addProduct(product);
 
     expect(VendingMach.getProduct(validProduct1.name).name).toBe(
-      stringSanitizer(validProduct1.name)
+      sanitizeString(validProduct1.name)
     );
   });
 
@@ -176,5 +176,6 @@ describe('VendingMachine', () => {
     VendingMach.decrementCoins(CoinType.HalfDollar, 1.36);
 
     expect(VendingMach.getCoinAmount(CoinType.HalfDollar)).toBe(1);
+    expect(VendingMach.totalCents).toBe(50);
   });
 });

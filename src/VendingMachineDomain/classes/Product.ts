@@ -4,7 +4,7 @@ import {
   InvalidDescription,
   InvalidName
 } from '../exceptions/InvalidTextError';
-import { stringSanitizer } from '../utils/string-sanitizer';
+import { sanitizeString } from '../utils/string-sanitizer';
 
 export class Product {
   private productPrice = 0;
@@ -53,7 +53,7 @@ export class Product {
 
   set name(name: string) {
     if (name.length < 1) throw new InvalidName('Name');
-    this.productName = stringSanitizer(name);
+    this.productName = sanitizeString(name);
   }
 
   get description(): string {
