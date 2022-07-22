@@ -153,4 +153,28 @@ describe('VendingMachine', () => {
     );
     expect(VendingMach.totalCents).toEqual(400);
   });
+
+  it('should decrement the amount of coins given CoinType and amount', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+
+    expect(VendingMach.totalCents).toEqual(300);
+
+    expect(() => VendingMach.decrementCoins(CoinType.Dollar, 3)).toThrow(
+      /not enough coins/i
+    );
+
+    VendingMach.decrementCoins(CoinType.Dollar, coinsToLoad.Dollar);
+
+    expect(VendingMach.getCoinAmount(CoinType.Dollar)).toBe(0);
+    expect(VendingMach.totalCents).toBe(100);
+
+    console.log(VendingMach.getCoinAmount(CoinType.HalfDollar), 'HalfDollar');
+
+    VendingMach.decrementCoins(CoinType.HalfDollar, 1.36);
+
+    expect(VendingMach.getCoinAmount(CoinType.HalfDollar)).toBe(1);
+  });
 });
