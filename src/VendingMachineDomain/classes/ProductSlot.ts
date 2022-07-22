@@ -6,12 +6,12 @@ import {
 } from '../exceptions/InvalidTextError';
 import { sanitizeString } from '../utils/string-sanitizer';
 
-export class Product {
+export class ProductSlot {
   private productPrice = 0;
   private productQuantity = 0;
   private productName = '';
   private productDescription = '';
-  static MAX_QUANTITY = 10; // Max 10 items per product to enforce physical upper limit
+  static MAX_QUANTITY = 10; // Max 10 items per slot to enforce physical upper limit
   constructor(
     name: string,
     description: string,
@@ -30,8 +30,8 @@ export class Product {
 
   set quantity(quantity: number) {
     if (quantity < 0) throw new InvalidQuantityError();
-    if (quantity > Product.MAX_QUANTITY) {
-      this.productQuantity = Number(Product.MAX_QUANTITY.toFixed());
+    if (quantity > ProductSlot.MAX_QUANTITY) {
+      this.productQuantity = Number(ProductSlot.MAX_QUANTITY.toFixed());
     } else {
       this.productQuantity = Number(quantity.toFixed()); // expect only integers
     }

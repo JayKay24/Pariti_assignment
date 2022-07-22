@@ -9,14 +9,15 @@ import { InsufficientCoinsError } from '../exceptions/InsufficientCoinsError';
 import { InsufficientAmountError } from '../exceptions/InsufficientAmountError';
 import { InvalidCoinAmountError } from '../exceptions/InvalidCoinAmountError';
 
-import { Product } from './Product';
+import { ProductSlot } from './ProductSlot';
 import { DuplicateProductError } from '../exceptions/DuplicateProductError';
 import { sanitizeString } from '../utils/string-sanitizer';
 import { sanitizeAmount } from '../utils/amount-sanitizer';
 import { sanitizeCoinPayload } from '../utils/coin-payload-sanitizer';
 
 export class VendingMachine {
-  private products: Map<string, Product>;
+  // ProductSlot implicitly contains products.
+  private products: Map<string, ProductSlot>;
   private coins: Map<CoinType, number>;
   private totalAmountOfCents: number;
   private static instance: VendingMachine;
@@ -66,7 +67,7 @@ export class VendingMachine {
    *
    * @returns an array of products in their insertion orderr
    */
-  getProducts(): Product[] {
+  getProducts(): ProductSlot[] {
     return [...this.products.values()];
   }
 
@@ -76,10 +77,10 @@ export class VendingMachine {
    *
    * @returns product matching name
    */
-  getProduct(name: string): Product {
+  getProduct(name: string): ProductSlot {
     const sanitizedName = sanitizeString(name);
     if (this.products.has(sanitizedName)) {
-      return <Product>this.products.get(sanitizedName);
+      return <ProductSlot>this.products.get(sanitizedName);
     } else {
       throw new ProductNotFoundError(name);
     }
@@ -89,7 +90,7 @@ export class VendingMachine {
    * Add Product to Vending Machine
    * @param product
    */
-  addProduct(product: Product): void {
+  addProduct(product: ProductSlot): void {
     const sanitizedName = sanitizeString(product.name);
     if (this.products.has(sanitizedName)) throw new DuplicateProductError();
     this.products.set(sanitizedName, product);
@@ -114,7 +115,7 @@ export class VendingMachine {
    * @param amount
    * @returns updated product
    */
-  incrementProductQuantity(name: string, amount: number): Product {
+  incrementProductQuantity(name: string, amount: number): ProductSlot {
     const product = this.getProduct(name);
     product.quantity += amount;
 
@@ -127,7 +128,7 @@ export class VendingMachine {
    * @param amount
    * @returns updated product
    */
-  decrementProductQuantity(name: string, amount: number): Product {
+  decrementProductQuantity(name: string, amount: number): ProductSlot {
     const product = this.getProduct(name);
     product.quantity -= amount;
 
@@ -141,7 +142,7 @@ export class VendingMachine {
    *
    * @returns updated product
    */
-  updateProductPrice(name: string, newPrice: number): Product {
+  updateProductPrice(name: string, newPrice: number): ProductSlot {
     const product = this.getProduct(name);
     product.price = newPrice;
 

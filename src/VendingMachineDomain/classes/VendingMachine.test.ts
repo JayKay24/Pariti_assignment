@@ -1,5 +1,5 @@
 import { VendingMachine } from './VendingMachine';
-import { Product } from './Product';
+import { ProductSlot } from './ProductSlot';
 import { CoinType } from '../enums/CoinType';
 import { validProduct1, validProduct2 } from '../utils/product';
 import { sanitizeString } from '../utils/string-sanitizer';
@@ -17,14 +17,14 @@ describe('VendingMachine', () => {
   it('adds products to inventory', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    const product1 = new Product(
+    const product1 = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
       validProduct1.price
     );
 
-    const product2 = new Product(
+    const product2 = new ProductSlot(
       validProduct2.name,
       validProduct2.description,
       validProduct2.quantity,
@@ -50,7 +50,7 @@ describe('VendingMachine', () => {
       /product abc not found/i
     );
 
-    const product = new Product(
+    const product = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
@@ -71,7 +71,7 @@ describe('VendingMachine', () => {
   it('gets a single product', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    const product = new Product(
+    const product = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
@@ -92,14 +92,14 @@ describe('VendingMachine', () => {
   it('should reduce the product quantity', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    const product1 = new Product(
+    const product1 = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
       validProduct1.price
     );
 
-    const product2 = new Product(
+    const product2 = new ProductSlot(
       validProduct2.name,
       validProduct2.description,
       20,
@@ -116,14 +116,14 @@ describe('VendingMachine', () => {
     VendingMach.incrementProductQuantity(product2.name, 5);
 
     expect(VendingMach.getProduct(product2.name).quantity).toBe(
-      Product.MAX_QUANTITY
+      ProductSlot.MAX_QUANTITY
     );
   });
 
   it('should update the product price', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    const product = new Product(
+    const product = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
@@ -190,14 +190,14 @@ describe('Vending Machine: Buying a product', () => {
   it('should facilitate buying a product', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    const product1 = new Product(
+    const product1 = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
       validProduct1.price
     );
 
-    const product2 = new Product(
+    const product2 = new ProductSlot(
       validProduct2.name,
       validProduct2.description,
       validProduct2.quantity,
@@ -248,14 +248,14 @@ describe('Vending Machine: Buying a product', () => {
   it('should facilitate buying only with dollars', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    const product1 = new Product(
+    const product1 = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
       validProduct1.price
     );
 
-    const product2 = new Product(
+    const product2 = new ProductSlot(
       validProduct2.name,
       validProduct2.description,
       validProduct2.quantity,
@@ -300,14 +300,14 @@ describe('Vending Machine: Buying a product', () => {
   it('should fail if amount given is less than product price', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    const product1 = new Product(
+    const product1 = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
       validProduct1.price
     );
 
-    const product2 = new Product(
+    const product2 = new ProductSlot(
       validProduct2.name,
       validProduct2.description,
       validProduct2.quantity,
@@ -343,14 +343,14 @@ describe('Vending Machine: Buying a product', () => {
   it('should fail if amount of coins loaded is not sufficient to provide change', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    const product1 = new Product(
+    const product1 = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
       validProduct1.price
     );
 
-    const product2 = new Product(
+    const product2 = new ProductSlot(
       validProduct2.name,
       validProduct2.description,
       validProduct2.quantity,

@@ -1,10 +1,10 @@
-import { Product } from './Product';
+import { ProductSlot } from './ProductSlot';
 import { validProduct1, invalidProduct } from '../utils/product';
 import { sanitizeString } from '../utils/string-sanitizer';
 
-describe('Product', () => {
+describe('ProductSlot', () => {
   it('should create a valid product', () => {
-    const product = new Product(
+    const product = new ProductSlot(
       validProduct1.name,
       validProduct1.description,
       validProduct1.quantity,
@@ -21,7 +21,7 @@ describe('Product', () => {
 
   it('should throw exceptions on invalid arguments', () => {
     const throwWithInvalidName = () =>
-      new Product(
+      new ProductSlot(
         invalidProduct.name,
         validProduct1.description,
         validProduct1.quantity,
@@ -29,7 +29,7 @@ describe('Product', () => {
       );
 
     const throwWithInvalidQuantity = () =>
-      new Product(
+      new ProductSlot(
         validProduct1.name,
         validProduct1.description,
         invalidProduct.quantity,
@@ -37,7 +37,7 @@ describe('Product', () => {
       );
 
     const throwWithInvalidPrice = () =>
-      new Product(
+      new ProductSlot(
         validProduct1.name,
         validProduct1.description,
         validProduct1.quantity,
@@ -45,7 +45,7 @@ describe('Product', () => {
       );
 
     const throwWithInvalidDescription = () =>
-      new Product(
+      new ProductSlot(
         validProduct1.name,
         invalidProduct.description,
         validProduct1.quantity,
