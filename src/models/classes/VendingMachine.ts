@@ -224,9 +224,16 @@ export class VendingMachine {
 
   private convertProductPriceToCents(productPrice: number): number {
     let resultCents = 0;
-    const [dollars, cents] = productPrice.toString().split('.');
-    resultCents += parseInt(dollars) * CentValue.Dollar;
-    resultCents += parseInt(cents);
+    const splitPrice = productPrice.toString().split('.');
+
+    if (splitPrice.length > 1) {
+      const [dollars, cents] = splitPrice;
+      resultCents += parseInt(dollars) * CentValue.Dollar;
+      resultCents += parseInt(cents);
+    } else {
+      const dollars = splitPrice[0];
+      resultCents += parseInt(dollars) * CentValue.Dollar;
+    }
 
     return resultCents;
   }
@@ -260,9 +267,9 @@ export class VendingMachine {
       throw new InsufficientAmountError();
     }
 
-    const expectedChange = this.computeChangeWithFewestCents(
-      centsGiven - productCents
-    );
+    const changeInCents = centsGiven - productCents;
+
+    const expectedChange = this.computeChangeWithFewestCents(changeInCents);
 
     const validChange = this.extractCoinsFromCoffer(expectedChange);
 

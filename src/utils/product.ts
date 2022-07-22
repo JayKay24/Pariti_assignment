@@ -8,7 +8,7 @@ const validProduct1 = {
 const validProduct2 = {
   name: 'Crisps',
   description: 'Potato crisps',
-  price: 3.48,
+  price: 13,
   quantity: 3
 };
 

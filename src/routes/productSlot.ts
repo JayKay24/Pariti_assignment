@@ -14,6 +14,6 @@ export class ProductSlotRoute {
     app
       .route(`${baseUrl}/admin/products/:name`)
       .patch(productSlotController.updateProductSlot);
-    app.route(`${baseUrl}/products`).post(productSlotController.buyProduct);
+    app.route(`${baseUrl}/products/buy`).post(productSlotController.buyProduct);
   }
 }

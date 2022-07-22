@@ -71,19 +71,21 @@ const addProduct = (req: Request, res: Response, next: NextFunction) => {
 
 const buyProduct = (req: Request, res: Response, next: NextFunction) => {
   const payload = <CoinPayload>{};
-  try {
-    for (const [key, value] of Object.entries(req.body.payload)) {
-      payload[<CoinType>key] = <number>value;
-    }
+  for (const [key, value] of Object.entries(req.body.payload)) {
+    payload[<CoinType>key] = <number>value;
+  }
 
+  try {
     const product = VendingMachineInstance.getProduct(req.body.name);
-    const change = VendingMachineInstance.buyProduct(payload, req.body.name);
+    const change = VendingMachineInstance.buyProduct(payload, product.name);
+
     const order = new Order(
       product.name,
       product.description,
       product.price,
       change
     );
+
     return res.status(200).send(order);
   } catch (error) {
     next(error);
