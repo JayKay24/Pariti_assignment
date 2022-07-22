@@ -13,26 +13,7 @@ export function sanitizeCoinPayload(payload: CoinPayload): CoinPayload {
   };
 
   for (const [coinType, amount] of Object.entries(payload)) {
-    switch (coinType) {
-      case CoinType.Dollar:
-        sanitizedPayload[CoinType.Dollar] = sanitizeAmount(amount);
-        break;
-      case CoinType.HalfDollar:
-        sanitizedPayload[CoinType.HalfDollar] = sanitizeAmount(amount);
-        break;
-      case CoinType.Quarter:
-        sanitizedPayload[CoinType.Quarter] = sanitizeAmount(amount);
-        break;
-      case CoinType.Dime:
-        sanitizedPayload[CoinType.Dime] = sanitizeAmount(amount);
-        break;
-      case CoinType.Nickel:
-        sanitizedPayload[CoinType.Nickel] = sanitizeAmount(amount);
-        break;
-      case CoinType.Penny:
-        sanitizedPayload[CoinType.Penny] = sanitizeAmount(amount);
-        break;
-    }
+    sanitizedPayload[<CoinType>coinType] = sanitizeAmount(amount);
   }
 
   return sanitizedPayload;

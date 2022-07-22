@@ -178,6 +178,8 @@ export class VendingMachine {
    */
   decrementCoins(coin: CoinType, amount: number): void {
     if (this.coins.has(coin)) {
+      // console.log('Hit!');
+      // console.log('TotalCents', this.totalAmountOfCents);
       const sanitizedAmount = sanitizeAmount(amount);
       const previousAmount = <number>this.coins.get(coin);
 
@@ -268,28 +270,11 @@ export class VendingMachine {
    * @returns object mapping each coin type to amount
    */
   private extractCoinsFromMachine(coinsToExtract: CoinChange): CoinChange {
-    for (const [coinType, amount] of Object.entries(coinsToExtract)) {
-      switch (coinType) {
-        case CoinType.Dollar:
-          this.decrementCoins(CoinType.Dollar, amount);
-          break;
-        case CoinType.HalfDollar:
-          this.decrementCoins(CoinType.HalfDollar, amount);
-          break;
-        case CoinType.Quarter:
-          this.decrementCoins(CoinType.Quarter, amount);
-          break;
-        case CoinType.Dime:
-          this.decrementCoins(CoinType.Dime, amount);
-          break;
-        case CoinType.Nickel:
-          this.decrementCoins(CoinType.Nickel, amount);
-          break;
-        case CoinType.Penny:
-          this.decrementCoins(CoinType.Penny, amount);
-          break;
-      }
+    const coinsToExtractKeys = Object.keys(coinsToExtract);
+    for (const key of coinsToExtractKeys) {
+      this.decrementCoins(<CoinType>key, coinsToExtract[<CoinType>key]);
     }
+
     return coinsToExtract;
   }
 

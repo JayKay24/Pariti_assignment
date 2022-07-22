@@ -1,15 +1,15 @@
 const validProduct1 = {
   name: 'JuiceBox',
   description: 'Orange Juice',
-  price: 12.2345,
-  quantity: 7
+  price: 2.2345,
+  quantity: 2
 };
 
 const validProduct2 = {
   name: 'Crisps',
   description: 'Potato crisps',
-  price: 10.48,
-  quantity: 5
+  price: 3.48,
+  quantity: 3
 };
 
 const invalidProduct = {

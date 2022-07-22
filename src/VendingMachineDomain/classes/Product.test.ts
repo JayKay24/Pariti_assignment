@@ -11,7 +11,7 @@ describe('Product', () => {
       validProduct1.price
     );
 
-    const expectedPriceValidProduct1 = 12.23;
+    const expectedPriceValidProduct1 = 2.23;
 
     expect(product.name).toBe(sanitizeString(validProduct1.name));
     expect(product.description).toBe(validProduct1.description);

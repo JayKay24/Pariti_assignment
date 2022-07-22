@@ -4,6 +4,7 @@ import { CoinType } from '../enums/CoinType';
 import { validProduct1, validProduct2 } from '../utils/product';
 import { sanitizeString } from '../utils/string-sanitizer';
 import { coinsToLoad, invalidCoinsToLoad } from '../utils/coins';
+import { CoinPayload } from '../contracts/CoinPayload';
 
 describe('VendingMachine', () => {
   // Clear the Singleton state before each test case
@@ -101,7 +102,7 @@ describe('VendingMachine', () => {
     const product2 = new Product(
       validProduct2.name,
       validProduct2.description,
-      validProduct2.quantity,
+      20,
       validProduct2.price
     );
 
@@ -171,11 +172,123 @@ describe('VendingMachine', () => {
     expect(VendingMach.getCoinAmount(CoinType.Dollar)).toBe(0);
     expect(VendingMach.totalCents).toBe(100);
 
-    console.log(VendingMach.getCoinAmount(CoinType.HalfDollar), 'HalfDollar');
-
     VendingMach.decrementCoins(CoinType.HalfDollar, 1.36);
 
     expect(VendingMach.getCoinAmount(CoinType.HalfDollar)).toBe(1);
     expect(VendingMach.totalCents).toBe(50);
+  });
+});
+
+describe('Vending Machine: Buying a product', () => {
+  // Clear the Singleton state before each test case
+  beforeEach(() => VendingMachine.getInstance().ResetInventory());
+
+  it('should facilitate buying a product', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    const product1 = new Product(
+      validProduct1.name,
+      validProduct1.description,
+      validProduct1.quantity,
+      validProduct1.price
+    );
+
+    const product2 = new Product(
+      validProduct2.name,
+      validProduct2.description,
+      validProduct2.quantity,
+      validProduct2.price
+    );
+
+    VendingMach.addProduct(product1);
+    VendingMach.addProduct(product2);
+
+    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.loadCoins(CoinType.Quarter, coinsToLoad.Quarter);
+    VendingMach.loadCoins(CoinType.Dime, coinsToLoad.Dime);
+    VendingMach.loadCoins(CoinType.Nickel, coinsToLoad.Nickel);
+    VendingMach.loadCoins(CoinType.Penny, coinsToLoad.Penny);
+
+    expect(VendingMach.totalCents).toBe(480);
+
+    const payloadProd1: CoinPayload = {
+      [CoinType.Dollar]: 2,
+      [CoinType.HalfDollar]: 0,
+      [CoinType.Quarter]: 0,
+      [CoinType.Dime]: 2,
+      [CoinType.Nickel]: 0,
+      [CoinType.Penny]: 4
+    };
+
+    // product price is $2.23(223 cents) & payload in cents is 224 cents.
+    // we expect one penny back & the total cents in inventory reduced by (224 - 223) = 1 cent;
+    // Total remaining cents in vending machine should be 479
+
+    expect(() => VendingMach.buyProduct(payloadProd1, 'abc')).toThrow(
+      /product abc not found/i
+    );
+
+    const change = VendingMach.buyProduct(payloadProd1, product1.name);
+
+    expect(change.Dollar).toBe(0);
+    expect(change.HalfDollar).toBe(0);
+    expect(change.Quarter).toBe(0);
+    expect(change.Dime).toBe(0);
+    expect(change.Nickel).toBe(0);
+    expect(change.Penny).toBe(1);
+    expect(VendingMach.totalCents).toBe(479);
+  });
+
+  it('should facilitate buying only with dollars', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    const product1 = new Product(
+      validProduct1.name,
+      validProduct1.description,
+      validProduct1.quantity,
+      validProduct1.price
+    );
+
+    const product2 = new Product(
+      validProduct2.name,
+      validProduct2.description,
+      validProduct2.quantity,
+      validProduct2.price
+    );
+
+    VendingMach.addProduct(product1);
+    VendingMach.addProduct(product2);
+
+    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.loadCoins(CoinType.Quarter, coinsToLoad.Quarter);
+    VendingMach.loadCoins(CoinType.Dime, coinsToLoad.Dime);
+    VendingMach.loadCoins(CoinType.Nickel, coinsToLoad.Nickel);
+    VendingMach.loadCoins(CoinType.Penny, coinsToLoad.Penny);
+
+    expect(VendingMach.totalCents).toBe(480);
+
+    const payloadProd1: CoinPayload = {
+      [CoinType.Dollar]: 3,
+      [CoinType.HalfDollar]: 0,
+      [CoinType.Quarter]: 0,
+      [CoinType.Dime]: 0,
+      [CoinType.Nickel]: 0,
+      [CoinType.Penny]: 0
+    };
+
+    // product price is $2.23(223 cents) & payload in cents is 300 cents.
+    // we expect one penny back & the total cents in inventory reduced by (300 - 223) = 77 cents;
+    // Total remaining cents in vending machine should be 403
+    const change = VendingMach.buyProduct(payloadProd1, product1.name);
+
+    expect(change.Dollar).toBe(0);
+    expect(change.HalfDollar).toBe(1);
+    expect(change.Quarter).toBe(1);
+    expect(change.Dime).toBe(0);
+    expect(change.Nickel).toBe(0);
+    expect(change.Penny).toBe(2);
+    expect(VendingMach.totalCents).toBe(403);
   });
 });
