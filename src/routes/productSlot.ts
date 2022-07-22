@@ -3,11 +3,17 @@ import express from 'express';
 import * as productSlotController from '../controllers/productSlot';
 
 export class ProductSlotRoute {
-  public routes(app: express.Application): void {
-    app.route('/api/v1/products').get(productSlotController.getProducts);
+  public routes(baseUrl = '', app: express.Application): void {
+    app.route(`${baseUrl}/products`).get(productSlotController.getProducts);
     app
-      .route('/api/v1/products/:productName')
+      .route(`${baseUrl}/products/:name`)
       .get(productSlotController.getProduct);
-    app.route('/api/v1/products').post(productSlotController.addProduct);
+    app
+      .route(`${baseUrl}/admin/products`)
+      .post(productSlotController.addProduct);
+    app
+      .route(`${baseUrl}/admin/products/:name`)
+      .patch(productSlotController.updateProductSlot);
+    app.route(`${baseUrl}/products`).post(productSlotController.buyProduct);
   }
 }

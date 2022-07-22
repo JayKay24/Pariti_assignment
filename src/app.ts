@@ -11,13 +11,14 @@ class App {
   productRoutes: ProductSlotRoute = new ProductSlotRoute();
   coinRoutes: CoinRoute = new CoinRoute();
   vendingMachine: VendingMachine;
+  baseUrl = '/api/v1';
 
   constructor(vendingMachine: VendingMachine) {
     this.app = express();
     this.vendingMachine = vendingMachine;
     this.app.use(bodyParser.json());
-    this.productRoutes.routes(this.app);
-    this.coinRoutes.routes(this.app);
+    this.productRoutes.routes(this.baseUrl, this.app);
+    this.coinRoutes.routes(this.baseUrl, this.app);
     this.app.use(errorHandler);
   }
 }
