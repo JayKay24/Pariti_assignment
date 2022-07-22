@@ -178,8 +178,6 @@ export class VendingMachine {
    */
   decrementCoins(coin: CoinType, amount: number): void {
     if (this.coins.has(coin)) {
-      // console.log('Hit!');
-      // console.log('TotalCents', this.totalAmountOfCents);
       const sanitizedAmount = sanitizeAmount(amount);
       const previousAmount = <number>this.coins.get(coin);
 

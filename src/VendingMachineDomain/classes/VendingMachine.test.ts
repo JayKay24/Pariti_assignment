@@ -238,6 +238,7 @@ describe('Vending Machine: Buying a product', () => {
     expect(change.Nickel).toBe(0);
     expect(change.Penny).toBe(1);
     expect(VendingMach.totalCents).toBe(479);
+    expect(VendingMach.getProduct(product1.name).quantity).toBe(1);
   });
 
   it('should facilitate buying only with dollars', () => {
@@ -290,5 +291,48 @@ describe('Vending Machine: Buying a product', () => {
     expect(change.Nickel).toBe(0);
     expect(change.Penny).toBe(2);
     expect(VendingMach.totalCents).toBe(403);
+  });
+
+  it('should fail if amount given is less than product price', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    const product1 = new Product(
+      validProduct1.name,
+      validProduct1.description,
+      validProduct1.quantity,
+      validProduct1.price
+    );
+
+    const product2 = new Product(
+      validProduct2.name,
+      validProduct2.description,
+      validProduct2.quantity,
+      validProduct2.price
+    );
+
+    VendingMach.addProduct(product1);
+    VendingMach.addProduct(product2);
+
+    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.loadCoins(CoinType.Quarter, coinsToLoad.Quarter);
+    VendingMach.loadCoins(CoinType.Dime, coinsToLoad.Dime);
+    VendingMach.loadCoins(CoinType.Nickel, coinsToLoad.Nickel);
+    VendingMach.loadCoins(CoinType.Penny, coinsToLoad.Penny);
+
+    expect(VendingMach.totalCents).toBe(480);
+
+    const payloadProd1: CoinPayload = {
+      [CoinType.Dollar]: 0,
+      [CoinType.HalfDollar]: 0,
+      [CoinType.Quarter]: 0,
+      [CoinType.Dime]: 0,
+      [CoinType.Nickel]: 0,
+      [CoinType.Penny]: 7
+    };
+
+    expect(() => VendingMach.buyProduct(payloadProd1, product1.name)).toThrow(
+      /amount given is less than price/i
+    );
   });
 });
