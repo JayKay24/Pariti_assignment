@@ -1,6 +1,7 @@
 import express from 'express';
 
 import * as productSlotController from '../controllers/productSlot';
+import { auth } from '../middleware/auth';
 
 export class ProductSlotRoute {
   public routes(baseUrl = '', app: express.Application): void {
@@ -10,10 +11,10 @@ export class ProductSlotRoute {
       .get(productSlotController.getProduct);
     app
       .route(`${baseUrl}/admin/products`)
-      .post(productSlotController.addProduct);
+      .post(auth, productSlotController.addProduct);
     app
       .route(`${baseUrl}/admin/products/:name`)
-      .patch(productSlotController.updateProductSlot);
+      .patch(auth, productSlotController.updateProductSlot);
     app.route(`${baseUrl}/products/buy`).post(productSlotController.buyProduct);
   }
 }
