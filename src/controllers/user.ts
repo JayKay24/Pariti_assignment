@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 
 import authentication from '../config/authentication.json';
 
-const login = (req: Request, res: Response, next: NextFunction) => {
+const login = (req: Request, res: Response) => {
   const username = req.body.username;
   const password = req.body.password;
 
