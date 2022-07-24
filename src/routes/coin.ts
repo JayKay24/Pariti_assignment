@@ -14,20 +14,12 @@ export class CoinRoute {
       .route(`${baseUrl}/admin/coins`)
       .put(
         auth,
-        body(CoinType.Dollar).not().isEmpty().isInt().withMessage(errorMessage),
-        body(CoinType.HalfDollar)
-          .not()
-          .isEmpty()
-          .isInt()
-          .withMessage(errorMessage),
-        body(CoinType.Quarter)
-          .not()
-          .isEmpty()
-          .isInt()
-          .withMessage(errorMessage),
-        body(CoinType.Dime).not().isEmpty().isInt().withMessage(errorMessage),
-        body(CoinType.Nickel).not().isEmpty().isInt().withMessage(errorMessage),
-        body(CoinType.Penny).not().isEmpty().isInt().withMessage(errorMessage),
+        body(CoinType.Dollar).exists().isInt().withMessage(errorMessage),
+        body(CoinType.HalfDollar).exists().isInt().withMessage(errorMessage),
+        body(CoinType.Quarter).exists().isInt().withMessage(errorMessage),
+        body(CoinType.Dime).exists().isInt().withMessage(errorMessage),
+        body(CoinType.Nickel).exists().isInt().withMessage(errorMessage),
+        body(CoinType.Penny).exists().isInt().withMessage(errorMessage),
         loadCoins
       );
   }

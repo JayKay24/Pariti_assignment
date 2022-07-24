@@ -54,6 +54,27 @@ paths:
                 $ref: '#/components/schemas/Order'
         '400':
           $ref: '#/components/responses/400Error'
+  /login:
+    post:
+      description: Let's an operator log in the Vending Machine system & perform restricted actions e.g Loading the coffer with coins
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authenticate'
+        responses:
+          '200':
+            description: Successfully authenticated the operator
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+          '400':
+            $ref: '#/components/responses/400Errors'
   /admin/product-slots:
     post:
       description: Let's an operator add a product slot to the vending machine
@@ -159,6 +180,13 @@ components:
           schema:
             $ref: '#/components/schemas/Errors'
   schemas:
+    Authenticate:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
     Cent:
       type: object
       properties:

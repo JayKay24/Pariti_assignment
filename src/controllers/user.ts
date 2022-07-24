@@ -1,9 +1,16 @@
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import * as jwt from 'jsonwebtoken';
 
 import authentication from '../config/authentication.json';
+import { ExpressValidatorError } from '../errorHandler';
 
 const login = (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new ExpressValidatorError(400, errors.array());
+  }
+
   const username = req.body.username;
   const password = req.body.password;
 
