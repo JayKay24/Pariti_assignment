@@ -13,7 +13,7 @@
     "clean-install": "rimraf ./node_modules && npm i",
     "start": "node ./build/server.js",
     "start:dev": "cross-env PORT=3000 nodemon",
-    "dev": "cross-env PORT=3000 NODE_ENV=dev ts-node ./server.ts",
+    "dev": "cross-env PORT=3000 NODE_ENV=dev ts-node ./src/server.ts",
     "prod": "PORT=3000 npm run build && npm start",
     "prepare": "husky install",
     "test": "cross-env NODE_ENV=test jest --coverage",

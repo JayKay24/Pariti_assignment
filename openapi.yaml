@@ -67,18 +67,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Authenticate'
-        responses:
-          '200':
-            description: Successfully authenticated the operator
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    token:
-                      type: string
-          '400':
-            $ref: '#/components/responses/400Errors'
+      responses:
+        '200':
+          description: Successfully authenticated the operator
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          $ref: '#/components/responses/400Errors'
   /admin/product-slots:
     post:
       description: Let's an operator add a product slot to the vending machine
@@ -247,6 +247,7 @@ components:
         price:
           type: number
         change:
+          $ref: '#/components/schemas/Cent'
     Error:
       type: object
       properties:
