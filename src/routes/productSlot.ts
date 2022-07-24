@@ -13,6 +13,7 @@ import { auth } from '../middleware/auth';
 
 export class ProductSlotRoute {
   public routes(baseUrl = '', app: express.Application): void {
+    app.route(`${baseUrl}`).get(getProductSlots);
     app.route(`${baseUrl}/product-slots`).get(getProductSlots);
     app.route(`${baseUrl}/product-slots/:name`).get(getProductSlot);
     app

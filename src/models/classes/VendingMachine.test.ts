@@ -139,9 +139,9 @@ describe('VendingMachine', () => {
   it('should load given coins of a particular type into the Vending machine', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
-    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
-    VendingMach.loadCoins(CoinType.Penny, coinsToLoad.Penny);
+    VendingMach.incrementCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.incrementCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.incrementCoins(CoinType.Penny, coinsToLoad.Penny);
 
     expect(VendingMach.getCoinAmount(CoinType.Dollar)).toEqual(
       coinsToLoad.Dollar
@@ -155,15 +155,15 @@ describe('VendingMachine', () => {
     expect(VendingMach.totalCents).toEqual(400);
 
     expect(() =>
-      VendingMach.loadCoins(CoinType.Dime, invalidCoinsToLoad.Dime)
+      VendingMach.incrementCoins(CoinType.Dime, invalidCoinsToLoad.Dime)
     ).toThrow(/coin amount must not be less than 0/i);
   });
 
   it('should decrement the amount of coins given CoinType and amount', () => {
     const VendingMach = VendingMachine.getInstance();
 
-    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
-    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.incrementCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.incrementCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
 
     expect(VendingMach.totalCents).toEqual(300);
 
@@ -181,6 +181,38 @@ describe('VendingMachine', () => {
     expect(VendingMach.getCoinAmount(CoinType.HalfDollar)).toBe(1);
     expect(VendingMach.totalCents).toBe(50);
   });
+
+  it('should clear the coffer', () => {
+    const VendingMach = VendingMachine.getInstance();
+
+    VendingMach.incrementCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.incrementCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+
+    expect(VendingMach.totalCents).toEqual(300);
+
+    VendingMach.emptyCoffer();
+
+    expect(VendingMach.totalCents).toBe(0);
+  });
+
+  // it('should remove the given coin from the Vending Machine', () => {
+  //   const VendingMach = VendingMachine.getInstance();
+
+  //   VendingMach.incrementCoins(CoinType.Dollar, coinsToLoad.Dollar);
+  //   VendingMach.incrementCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+
+  //   expect(VendingMach.totalCents).toEqual(300);
+
+  //   VendingMach.removeCoins(CoinType.Dime);
+
+  //   expect(() => VendingMach.removeCoins(CoinType.Dime)).toThrow(
+  //     /no such coin type exists in the vending machine/i
+  //   );
+
+  //   VendingMach.removeCoins(CoinType.Dollar);
+
+  //   expect(VendingMach.totalCents).toBe(100);
+  // });
 });
 
 describe('Vending Machine: Buying a product', () => {
@@ -207,12 +239,12 @@ describe('Vending Machine: Buying a product', () => {
     VendingMach.addProduct(product1);
     VendingMach.addProduct(product2);
 
-    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
-    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
-    VendingMach.loadCoins(CoinType.Quarter, coinsToLoad.Quarter);
-    VendingMach.loadCoins(CoinType.Dime, coinsToLoad.Dime);
-    VendingMach.loadCoins(CoinType.Nickel, coinsToLoad.Nickel);
-    VendingMach.loadCoins(CoinType.Penny, coinsToLoad.Penny);
+    VendingMach.incrementCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.incrementCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.incrementCoins(CoinType.Quarter, coinsToLoad.Quarter);
+    VendingMach.incrementCoins(CoinType.Dime, coinsToLoad.Dime);
+    VendingMach.incrementCoins(CoinType.Nickel, coinsToLoad.Nickel);
+    VendingMach.incrementCoins(CoinType.Penny, coinsToLoad.Penny);
 
     expect(VendingMach.totalCents).toBe(480);
 
@@ -265,12 +297,12 @@ describe('Vending Machine: Buying a product', () => {
     VendingMach.addProduct(product1);
     VendingMach.addProduct(product2);
 
-    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
-    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
-    VendingMach.loadCoins(CoinType.Quarter, coinsToLoad.Quarter);
-    VendingMach.loadCoins(CoinType.Dime, coinsToLoad.Dime);
-    VendingMach.loadCoins(CoinType.Nickel, coinsToLoad.Nickel);
-    VendingMach.loadCoins(CoinType.Penny, coinsToLoad.Penny);
+    VendingMach.incrementCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.incrementCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.incrementCoins(CoinType.Quarter, coinsToLoad.Quarter);
+    VendingMach.incrementCoins(CoinType.Dime, coinsToLoad.Dime);
+    VendingMach.incrementCoins(CoinType.Nickel, coinsToLoad.Nickel);
+    VendingMach.incrementCoins(CoinType.Penny, coinsToLoad.Penny);
 
     expect(VendingMach.totalCents).toBe(480);
 
@@ -317,12 +349,12 @@ describe('Vending Machine: Buying a product', () => {
     VendingMach.addProduct(product1);
     VendingMach.addProduct(product2);
 
-    VendingMach.loadCoins(CoinType.Dollar, coinsToLoad.Dollar);
-    VendingMach.loadCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
-    VendingMach.loadCoins(CoinType.Quarter, coinsToLoad.Quarter);
-    VendingMach.loadCoins(CoinType.Dime, coinsToLoad.Dime);
-    VendingMach.loadCoins(CoinType.Nickel, coinsToLoad.Nickel);
-    VendingMach.loadCoins(CoinType.Penny, coinsToLoad.Penny);
+    VendingMach.incrementCoins(CoinType.Dollar, coinsToLoad.Dollar);
+    VendingMach.incrementCoins(CoinType.HalfDollar, coinsToLoad.HalfDollar);
+    VendingMach.incrementCoins(CoinType.Quarter, coinsToLoad.Quarter);
+    VendingMach.incrementCoins(CoinType.Dime, coinsToLoad.Dime);
+    VendingMach.incrementCoins(CoinType.Nickel, coinsToLoad.Nickel);
+    VendingMach.incrementCoins(CoinType.Penny, coinsToLoad.Penny);
 
     expect(VendingMach.totalCents).toBe(480);
 
@@ -361,12 +393,12 @@ describe('Vending Machine: Buying a product', () => {
     VendingMach.addProduct(product2);
 
     // Load the vending machine with 10 cents
-    VendingMach.loadCoins(CoinType.Dollar, 0);
-    VendingMach.loadCoins(CoinType.HalfDollar, 0);
-    VendingMach.loadCoins(CoinType.Quarter, 0);
-    VendingMach.loadCoins(CoinType.Dime, 0);
-    VendingMach.loadCoins(CoinType.Nickel, coinsToLoad.Nickel);
-    VendingMach.loadCoins(CoinType.Penny, 0);
+    VendingMach.incrementCoins(CoinType.Dollar, 0);
+    VendingMach.incrementCoins(CoinType.HalfDollar, 0);
+    VendingMach.incrementCoins(CoinType.Quarter, 0);
+    VendingMach.incrementCoins(CoinType.Dime, 0);
+    VendingMach.incrementCoins(CoinType.Nickel, coinsToLoad.Nickel);
+    VendingMach.incrementCoins(CoinType.Penny, 0);
 
     expect(VendingMach.totalCents).toBe(10);
 

@@ -16,8 +16,11 @@ const loadCoins = (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     throw new ExpressValidatorError(400, errors.array());
   }
+
+  VendingMachineInstance.emptyCoffer();
+
   for (const [key, value] of Object.entries(req.body)) {
-    VendingMachineInstance.loadCoins(<CoinType>key, <number>value);
+    VendingMachineInstance.incrementCoins(<CoinType>key, <number>value);
   }
 
   const coffer = fetchCoffer({});

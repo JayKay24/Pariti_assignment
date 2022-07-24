@@ -139,6 +139,7 @@ export class VendingMachine {
   decrementProductQuantity(name: string, amount: number): ProductSlot {
     const product = this.getProduct(name);
     product.quantity -= amount;
+    if (product.quantity === 0) this.removeProduct(product.name);
 
     return product;
   }
@@ -162,7 +163,7 @@ export class VendingMachine {
    * @param coin
    * @param amount
    */
-  loadCoins(coin: CoinType, amount: number): void {
+  incrementCoins(coin: CoinType, amount: number): void {
     if (this.coffer.has(coin)) {
       const sanitizedAmount = sanitizeAmount(amount);
       const previousAmount = <number>this.coffer.get(coin);
@@ -200,6 +201,16 @@ export class VendingMachine {
       const centValue = sanitizedAmount * CentValue[coin];
       this.totalAmountOfCents -= centValue;
     }
+  }
+
+  /**
+   * Empty the Vending Machine Coffer
+   * @param coin
+   */
+  emptyCoffer(): void {
+    this.coffer.clear();
+    this.prepareCoffer();
+    this.totalAmountOfCents = 0;
   }
 
   /**
@@ -330,6 +341,18 @@ export class VendingMachine {
   }
 
   /**
+   * Initialize coin values to zero
+   */
+  private prepareCoffer(): void {
+    this.coffer.set(CoinType.Dollar, 0);
+    this.coffer.set(CoinType.HalfDollar, 0);
+    this.coffer.set(CoinType.Quarter, 0);
+    this.coffer.set(CoinType.Dime, 0);
+    this.coffer.set(CoinType.Nickel, 0);
+    this.coffer.set(CoinType.Penny, 0);
+  }
+
+  /**
    * Resets the Vending Machine for testing purposes.
    *
    */
@@ -337,12 +360,7 @@ export class VendingMachine {
     this.products.clear();
     this.coffer.clear();
 
-    this.coffer.set(CoinType.Dollar, 0);
-    this.coffer.set(CoinType.HalfDollar, 0);
-    this.coffer.set(CoinType.Quarter, 0);
-    this.coffer.set(CoinType.Dime, 0);
-    this.coffer.set(CoinType.Nickel, 0);
-    this.coffer.set(CoinType.Penny, 0);
+    this.prepareCoffer();
 
     this.totalAmountOfCents = 0;
   }

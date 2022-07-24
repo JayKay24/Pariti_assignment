@@ -9,8 +9,10 @@ import { CoinType } from '../models/enums/CoinType';
 import { formatProductResponseObject } from '../utils/format-product-response';
 
 const getProductSlots = (req: Request, res: Response) => {
-  const products = VendingMachineInstance.getProducts();
-  return res.status(200).send(products);
+  const productSlots = VendingMachineInstance.getProducts();
+  const formattedSlots = productSlots.map(formatProductResponseObject);
+
+  return res.status(200).send(formattedSlots);
 };
 
 const getProductSlot = (req: Request, res: Response) => {
@@ -71,7 +73,8 @@ const addProductSlot = (req: Request, res: Response) => {
     );
 
     const product = VendingMachineInstance.getProduct(req.body.name);
-    return res.status(201).send(product);
+    const response = formatProductResponseObject(product);
+    return res.status(201).send(response);
   } catch (error) {
     throw new RequestError(400, <string>error);
   }
