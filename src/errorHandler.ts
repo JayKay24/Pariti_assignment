@@ -25,7 +25,6 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error(err);
   let status: number;
 
   if (err instanceof RequestError) {
