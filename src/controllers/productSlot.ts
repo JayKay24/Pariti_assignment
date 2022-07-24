@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import { VendingMachineInstance } from '../app';
-import { RequestError } from '../errorHandler';
+import { ExpressValidatorError, RequestError } from '../errorHandler';
 import { Order } from '../models/classes/Order';
 import { ProductSlot } from '../models/classes/ProductSlot';
 import { CoinPayload } from '../models/contracts/CoinPayload';
@@ -23,8 +24,13 @@ const getProduct = (req: Request, res: Response) => {
 };
 
 const updateProductSlot = (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new ExpressValidatorError(400, errors.array());
+  }
+
   try {
-    const product = VendingMachineInstance.getProduct(req.params.name);
+    const product = VendingMachineInstance.getProduct(req.body.name);
     if (req.body.name) {
       product.name = req.body.name;
     }
@@ -49,6 +55,11 @@ const updateProductSlot = (req: Request, res: Response) => {
 };
 
 const addProduct = (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new ExpressValidatorError(400, errors.array());
+  }
+
   try {
     VendingMachineInstance.addProduct(
       new ProductSlot(
