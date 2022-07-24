@@ -8,12 +8,12 @@ import { CoinPayload } from '../models/contracts/CoinPayload';
 import { CoinType } from '../models/enums/CoinType';
 import { formatProductResponseObject } from '../utils/format-product-response';
 
-const getProducts = (req: Request, res: Response) => {
+const getProductSlots = (req: Request, res: Response) => {
   const products = VendingMachineInstance.getProducts();
   return res.status(200).send(products);
 };
 
-const getProduct = (req: Request, res: Response) => {
+const getProductSlot = (req: Request, res: Response) => {
   try {
     const product = VendingMachineInstance.getProduct(req.params.name);
     const response = formatProductResponseObject(product);
@@ -54,7 +54,7 @@ const updateProductSlot = (req: Request, res: Response) => {
   }
 };
 
-const addProduct = (req: Request, res: Response) => {
+const addProductSlot = (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     throw new ExpressValidatorError(400, errors.array());
@@ -100,4 +100,10 @@ const buyProduct = (req: Request, res: Response) => {
   }
 };
 
-export { addProduct, getProducts, getProduct, updateProductSlot, buyProduct };
+export {
+  addProductSlot,
+  getProductSlots,
+  getProductSlot,
+  updateProductSlot,
+  buyProduct
+};
