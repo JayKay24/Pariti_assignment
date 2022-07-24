@@ -1,7 +1,8 @@
 openapi: 3.0.0
 info:
   title: Pariti Vending Machine Challenge
-  version: REST API exposing endpoints to interact with a Vending Machine class
+  description: REST API exposing endpoints to interact with a Vending Machine class
+  version: 1.0.0
 servers:
   - url: http://localhost:3000/api/v1
 paths:
@@ -19,7 +20,7 @@ paths:
                   $ref: '#/components/schemas/ProductSlot'
   /product-slots/{name}:
     get:
-      description: Obtain inforation about a product slot
+      description: Obtain information about a product slot
       parameters:
         - $ref: '#/components/parameters/NameRequired'
       responses:
@@ -56,7 +57,10 @@ paths:
           $ref: '#/components/responses/400Error'
   /login:
     post:
-      description: Let's an operator log in the Vending Machine system & perform restricted actions e.g Loading the coffer with coins
+      description:
+        Let's an operator log into the Vending Machine system & perform restricted actions e.g
+        Loading the coffer with coins. Grab the jwt token from the response and append it as a
+        Bearer token in the Authorization header for future requests.
       requestBody:
         required: true
         content:
@@ -78,6 +82,9 @@ paths:
   /admin/product-slots:
     post:
       description: Let's an operator add a product slot to the vending machine
+      security:
+        - bearerAuth: []
+
       requestBody:
         required: true
         content:
@@ -95,6 +102,9 @@ paths:
           $ref: '#/components/responses/400Errors'
     patch:
       description: Let's an operator update a product slot
+      security:
+        - bearerAuth: []
+
       requestBody:
         required: true
         content:
@@ -126,6 +136,9 @@ paths:
   /admin/product-slots/{name}:
     delete:
       description: Let's an operator remove a product slot
+      security:
+        - bearerAuth: []
+
       parameters:
         - $ref: '#/components/parameters/NameRequired'
       responses:
@@ -134,6 +147,9 @@ paths:
   /admin/coins:
     get:
       description: Obtain the items in the Vending Machine coffer
+      security:
+        - bearerAuth: []
+
       responses:
         '200':
           description: Successfully returned an object representing the coffer
@@ -143,6 +159,9 @@ paths:
                 $ref: '#/components/schemas/Cent'
     put:
       description: Update the coins in the Vending Machine coffer
+      security:
+        - bearerAuth: []
+
       requestBody:
         required: true
         content:
@@ -159,6 +178,11 @@ paths:
         '400':
           $ref: '#/components/responses/400Errors'
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   parameters:
     NameRequired:
       name: name
