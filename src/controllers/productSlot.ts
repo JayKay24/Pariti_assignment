@@ -77,6 +77,20 @@ const addProductSlot = (req: Request, res: Response) => {
   }
 };
 
+const deleteProductSlot = (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new ExpressValidatorError(400, errors.array());
+  }
+
+  try {
+    VendingMachineInstance.removeProduct(req.params.name);
+    res.status(204).send({ message: 'Successfully deleted' });
+  } catch (error) {
+    throw new RequestError(400, <string>error);
+  }
+};
+
 const buyProduct = (req: Request, res: Response) => {
   const payload = <CoinPayload>{};
   for (const [key, value] of Object.entries(req.body.payload)) {
@@ -105,5 +119,6 @@ export {
   getProductSlots,
   getProductSlot,
   updateProductSlot,
+  deleteProductSlot,
   buyProduct
 };

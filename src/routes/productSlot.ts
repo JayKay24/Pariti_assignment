@@ -1,21 +1,22 @@
 import express from 'express';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 import {
   getProductSlots,
   getProductSlot,
   addProductSlot,
   updateProductSlot,
-  buyProduct
+  buyProduct,
+  deleteProductSlot
 } from '../controllers/productSlot';
 import { auth } from '../middleware/auth';
 
 export class ProductSlotRoute {
   public routes(baseUrl = '', app: express.Application): void {
-    app.route(`${baseUrl}/products-slot`).get(getProductSlots);
-    app.route(`${baseUrl}/products-slot/:name`).get(getProductSlot);
+    app.route(`${baseUrl}/product-slots`).get(getProductSlots);
+    app.route(`${baseUrl}/product-slots/:name`).get(getProductSlot);
     app
-      .route(`${baseUrl}/admin/products-slot`)
+      .route(`${baseUrl}/admin/product-slots`)
       .post(
         auth,
         body('name').not().isEmpty().isAlpha('en-US', { ignore: /\s/i }),
@@ -33,7 +34,7 @@ export class ProductSlotRoute {
         addProductSlot
       );
     app
-      .route(`${baseUrl}/admin/products-slot/`)
+      .route(`${baseUrl}/admin/product-slots/`)
       .patch(
         auth,
         body('name').not().isEmpty().isAlpha('en-US', { ignore: /\s/i }),
@@ -50,6 +51,16 @@ export class ProductSlotRoute {
           .withMessage('must be a number'),
         updateProductSlot
       );
-    app.route(`${baseUrl}/products-slot/buy`).post(buyProduct);
+    app
+      .route(`${baseUrl}/admin/product-slots/:name`)
+      .delete(
+        auth,
+        param('name')
+          .not()
+          .isEmpty()
+          .withMessage('Please specify a product slot'),
+        deleteProductSlot
+      );
+    app.route(`${baseUrl}/product-slots/buy`).post(buyProduct);
   }
 }
