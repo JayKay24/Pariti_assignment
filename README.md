@@ -18,9 +18,9 @@ Install these dependencies on your local machine:
 
 ## Instructions
 
-1. Change directory into `vending_machine` after unzipping
+1. Change directory into `Pariti_assignment` after unzipping
    ```
-    $ cd vending_machine
+    $ cd Pariti_assignment
    ```
 2. Build the Vending Machine image using docker [Docker](https://hub.docker.com/)
    ```
@@ -32,14 +32,15 @@ Install these dependencies on your local machine:
    ```
 4. Copy the contents in [openAPI](./openapi.yaml) & paste it to [swagger editor](https://editor.swagger.io/) using an
    open api viewer tool & manually test the endpoints in the documentation using a
-   tool like [postman](https://www.postman.com/downloads/).
+   tool like [postman](https://www.postman.com/downloads/). Currently, everything is stored in RAM. The state is not
+   persisted when the server process is killed.
 
 ## Running the tests locally
 
 1. Install dependencies on your machine
 
 ```
-$ cd vending_machine
+$ cd Pariti_assignment
 $ npm install
 ```
 
