@@ -1,0 +1,255 @@
+openapi: 3.0.0
+info:
+  title: Pariti Vending Machine Challenge
+  description: REST API exposing endpoints to interact with a Vending Machine class
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+paths:
+  /product-slots:
+    get:
+      description: Returns a list of product slots
+      responses:
+        '200':
+          description: Successfully returned a list of product slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductSlot'
+  /product-slots/{name}:
+    get:
+      description: Obtain information about a product slot
+      parameters:
+        - $ref: '#/components/parameters/NameRequired'
+      responses:
+        '200':
+          description: Successfully returned a product slot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSlot'
+        '400':
+          $ref: '#/components/responses/400Error'
+  /product-slots/buy:
+    post:
+      description: Let's a user customer buy a product by specifying a product slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                payload:
+                  $ref: '#/components/schemas/Cent'
+      responses:
+        '200':
+          description: Successfully returned an order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/components/responses/400Error'
+  /login:
+    post:
+      description:
+        Let's an operator log into the Vending Machine system & perform restricted actions e.g
+        Loading the coffer with coins. Grab the jwt token from the response and append it as a
+        Bearer token in the Authorization header for future requests. Login with username='test'
+        & password='password'.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authenticate'
+      responses:
+        '200':
+          description: Successfully authenticated the operator
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          $ref: '#/components/responses/400Errors'
+  /admin/product-slots:
+    post:
+      description: Let's an operator add a product slot to the vending machine
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductSlot'
+      responses:
+        '200':
+          description: Successfully added a product slot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSlot'
+        '400':
+          $ref: '#/components/responses/400Errors'
+    put:
+      description: Let's an operator update a product slot
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductSlot'
+      responses:
+        '200':
+          description: Successfully updated a product slot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSlot'
+        '400':
+          $ref: '#/components/responses/400Errors'
+  /admin/product-slots/{name}:
+    delete:
+      description: Let's an operator remove a product slot
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: '#/components/parameters/NameRequired'
+      responses:
+        '204':
+          description: 'The product slot was deleted successfully'
+  /admin/coins:
+    get:
+      description: Obtain the items in the Vending Machine coffer
+      security:
+        - bearerAuth: []
+
+      responses:
+        '200':
+          description: Successfully returned an object representing the coffer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cent'
+    put:
+      description: Update the coins in the Vending Machine coffer
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cent'
+      responses:
+        '200':
+          description: Successfully updated the Vending Machine coffer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cent'
+        '400':
+          $ref: '#/components/responses/400Errors'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    NameRequired:
+      name: name
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    400Error:
+      description: Invalid Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    400Errors:
+      description: Invalid Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    Authenticate:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Cent:
+      type: object
+      properties:
+        Dollar:
+          type: integer
+          maximum: 100
+        HalfDollar:
+          type: integer
+          maximum: 100
+        Quarter:
+          type: integer
+          maximum: 100
+        Dime:
+          type: integer
+          maximum: 100
+        Nickel:
+          type: integer
+          maximum: 100
+        Penny:
+          type: integer
+          maximum: 100
+    ProductSlot:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        quantity:
+          type: integer
+          maximum: 10
+        price:
+          type: number
+    Order:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        change:
+          $ref: '#/components/schemas/Cent'
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+    Errors:
+      type: object
+      properties:
+        errors:
+          type: object
