@@ -28,20 +28,12 @@ export class ProductSlotRoute {
       );
     app
       .route(`${baseUrl}/admin/product-slots/`)
-      .patch(
+      .put(
         auth,
-        body('name').not().isEmpty().isAlpha('en-US', { ignore: /\s/i }),
-        body('description').not().isEmpty().isAlpha('en-US', { ignore: /\s/i }),
-        body('quantity')
-          .not()
-          .isEmpty()
-          .isInt()
-          .withMessage('must be an integer'),
-        body('price')
-          .not()
-          .isEmpty()
-          .isNumeric()
-          .withMessage('must be a number'),
+        body('name').exists().isAlpha('en-US', { ignore: /\s/i }),
+        body('description').exists().isAlpha('en-US', { ignore: /\s/i }),
+        body('quantity').exists().isInt().withMessage('must be an integer'),
+        body('price').exists().isNumeric().withMessage('must be a number'),
         updateProductSlot
       );
     app

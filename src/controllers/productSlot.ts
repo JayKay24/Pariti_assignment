@@ -33,21 +33,10 @@ const updateProductSlot = (req: Request, res: Response) => {
 
   try {
     const product = VendingMachineInstance.getProduct(req.body.name);
-    if (req.body.name) {
-      product.name = req.body.name;
-    }
-
-    if (req.body.description) {
-      product.description = req.body.description;
-    }
-
-    if (req.body.quantity) {
-      product.quantity = req.body.quantity;
-    }
-
-    if (req.body.price) {
-      product.price = req.body.price;
-    }
+    product.name = req.body.name;
+    product.description = req.body.description;
+    product.quantity = req.body.quantity;
+    product.price = req.body.price;
 
     const response = formatProductResponseObject(product);
     return res.status(200).send(response);

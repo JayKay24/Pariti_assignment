@@ -101,7 +101,7 @@ paths:
                 $ref: '#/components/schemas/ProductSlot'
         '400':
           $ref: '#/components/responses/400Errors'
-    patch:
+    put:
       description: Let's an operator update a product slot
       security:
         - bearerAuth: []
@@ -111,20 +111,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  required: false
-                description:
-                  type: string
-                  required: false
-                quantity:
-                  type: integer
-                  required: false
-                price:
-                  type: number
-                  required: false
+              $ref: '#/components/schemas/ProductSlot'
       responses:
         '200':
           description: Successfully updated a product slot
