@@ -60,7 +60,8 @@ paths:
       description:
         Let's an operator log into the Vending Machine system & perform restricted actions e.g
         Loading the coffer with coins. Grab the jwt token from the response and append it as a
-        Bearer token in the Authorization header for future requests.
+        Bearer token in the Authorization header for future requests. Login with username='test'
+        & password='password'.
       requestBody:
         required: true
         content:
@@ -216,16 +217,22 @@ components:
       properties:
         Dollar:
           type: integer
+          maximum: 100
         HalfDollar:
           type: integer
+          maximum: 100
         Quarter:
           type: integer
+          maximum: 100
         Dime:
           type: integer
+          maximum: 100
         Nickel:
           type: integer
+          maximum: 100
         Penny:
           type: integer
+          maximum: 100
     ProductSlot:
       type: object
       properties:
@@ -235,6 +242,7 @@ components:
           type: string
         quantity:
           type: integer
+          maximum: 10
         price:
           type: number
     Order:
