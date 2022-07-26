@@ -84,6 +84,11 @@ const deleteProductSlot = (req: Request, res: Response) => {
 };
 
 const buyProduct = (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new ExpressValidatorError(400, errors.array());
+  }
+
   const payload = <CoinPayload>{};
   for (const [key, value] of Object.entries(req.body.payload)) {
     payload[<CoinType>key] = <number>value;

@@ -43,6 +43,17 @@ export class ProductSlotRoute {
         param('name').exists().withMessage('Please specify a product slot'),
         deleteProductSlot
       );
-    app.route(`${baseUrl}/product-slots/buy`).post(buyProduct);
+    app
+      .route(`${baseUrl}/product-slots/buy`)
+      .post(
+        body('name')
+          .exists()
+          .isAlpha('en-US', { ignore: /\s/i })
+          .withMessage('Please specify an existing product.'),
+        body('payload')
+          .exists()
+          .withMessage('Please provide your coin amount.'),
+        buyProduct
+      );
   }
 }

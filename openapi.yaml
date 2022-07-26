@@ -1,7 +1,9 @@
 openapi: 3.0.0
 info:
   title: Pariti Vending Machine Challenge
-  description: REST API exposing endpoints to interact with a Vending Machine class
+  description:
+    REST API exposing endpoints to interact with a Vending Machine class. Buying currently only
+    supported for US currency.
   version: 1.0.0
 servers:
   - url: http://localhost:3000/api/v1
@@ -54,7 +56,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Order'
         '400':
-          $ref: '#/components/responses/400Error'
+          $ref: '#/components/responses/400Errors'
   /login:
     post:
       description:
@@ -134,7 +136,9 @@ paths:
           description: 'The product slot was deleted successfully'
   /admin/coins:
     get:
-      description: Obtain the items in the Vending Machine coffer
+      description:
+        Obtain the items in the Vending Machine coffer. You must load some coins
+        in the vending machine first before buying anything.
       security:
         - bearerAuth: []
 
@@ -146,7 +150,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Cent'
     put:
-      description: Update the coins in the Vending Machine coffer
+      description:
+        Update the coins in the Vending Machine coffer. You must load some coins
+        in the vending machine first before buying anything.
       security:
         - bearerAuth: []
 

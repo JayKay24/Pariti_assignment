@@ -3,3 +3,4 @@ build
 .husky
 coverage
 node_modules
+docs
